@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Voltic App V.1</string>
+    <string name="title_activity_welcome1">Welcome1</string>
 </resources>
