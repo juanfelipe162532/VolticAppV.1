@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:padding="16dp"
+    tools:context=".RegisterScreen">
+
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:src="@drawable/icon" />
+
+    <TextView
+        android:id="@+id/registerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logoImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Regístrate"
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/registerSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/registerTitle"
+        android:layout_marginTop="8dp"
+        android:text="Por favor completa los campos requeridos"
+        android:textColor="@color/black"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/registerSubtitle"
+        android:layout_marginTop="16dp"
+        android:hint="Correo electrónico (requerido)"
+        android:paddingStart="20dp"
+        android:inputType="textEmailAddress"
+        android:background="@drawable/rounded_edittext"/>
+
+    <EditText
+        android:id="@+id/usernameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/emailEditText"
+        android:layout_marginTop="25dp"
+        android:hint="Nombre de usuario (requerido)"
+        android:paddingStart="20dp"
+        android:inputType="text"
+        android:background="@drawable/rounded_edittext"/>
+
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/usernameEditText"
+        android:layout_marginTop="25dp"
+        android:hint="Contraseña (requrido)"
+        android:paddingStart="20dp"
+        android:inputType="textPassword"
+        android:background="@drawable/rounded_edittext"/>
+
+    <EditText
+        android:id="@+id/confirmPasswordEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/passwordEditText"
+        android:layout_marginTop="25dp"
+        android:hint="Confirma tu contraseña"
+        android:paddingStart="20dp"
+        android:inputType="textPassword"
+        android:background="@drawable/rounded_edittext"/>
+
+    <CheckBox
+        android:id="@+id/termsCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/confirmPasswordEditText"
+        android:layout_marginTop="42dp"
+        android:text="Estoy de acuerdo con los Términos y condiciones"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:buttonTint="@color/checkbox_color"/>
+
+    <Button
+        android:id="@+id/registerButton"
+        android:layout_width="350dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/termsCheckBox"
+        android:layout_marginTop="39dp"
+        android:text="REGISTRARME"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="@drawable/button_background_red"
+        android:textColor="#FFFF" />
+</RelativeLayout>
+
+
