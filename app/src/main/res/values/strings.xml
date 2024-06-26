@@ -1,4 +1,15 @@
 <resources>
     <string name="app_name">Voltic App V.1</string>
     <string name="title_activity_welcome1">Welcome1</string>
+    <string name="listo_para_empezar">Listo para Empezar?</string>
+    <string name="empieza_a_disfrutar_de_una_experiencia_nica_con_tu_patineta_el_ctrica">¡Empieza a disfrutar de una experiencia única con tu patineta eléctrica!</string>
+    <string name="continuar">CONTINUAR</string>
+    <string name="personaliza_tu_experiencia">Personaliza tu experiencia</string>
+    <string name="recibe_consejos_y_sugerencias_personalizadas_para_mejorar_la_eficiencia_y_rendimiento_de_tu_patineta">Recibe consejos y sugerencias personalizadas para mejorar la eficiencia y rendimiento de tu patineta.</string>
+    <string name="saltar">SALTAR</string>
+    <string name="siguiente">SIGUIENTE</string>
+    <string name="bienvenido_a_voltic">¡Bienvenido a Voltic!</string>
+    <string name="tu_compa_ero_perfecto_para_monitorear_y_gestionar_tu_patineta_el_ctrica">Tu compañero perfecto para monitorear y gestionar tu patineta eléctrica.</string>
+    <string name="monitorea_en_tiempo_real">Monitorea en Tiempo Real</string>
+    <string name="obt_n_informaci_n_instant_nea_sobre_la_velocidad_distancia_recorrida_y_estado_de_la_bater_a_de_tu_patineta">Obtén información instantánea sobre la velocidad, distancia recorrida y estado de la batería de tu patineta.</string>
 </resources>

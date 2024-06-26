@@ -15,6 +15,6 @@ class LoadingScreen : ComponentActivity() {
             val intent = Intent(this, WelcomeScreen1::class.java)
             startActivity(intent)
             finish()
-        }, 5000)
+        }, 2000)
     }
 }
