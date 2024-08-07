@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/whitebackground"
+    tools:context=".BluetoothConnection2">
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Asistente de conexión"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/button_text_color_white"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView2"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
+        android:layout_below="@id/title_text"
+        android:layout_marginTop="50dp"
+        android:layout_centerInParent="true"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieAnimationView"
+        android:layout_width="250dp"
+        android:layout_height="200dp"
+        android:layout_below="@id/title_text"
+        android:layout_marginTop="200dp"
+        android:layout_centerInParent="true"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true" />
+
+    <RelativeLayout
+        android:id="@+id/devices_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
+
+
+</RelativeLayout>

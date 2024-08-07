@@ -51,7 +51,7 @@
         android:layout_marginBottom="30dp"
         android:layout_marginStart="20dp"
         android:text="@string/saltar"
-        android:background="@drawable/transparent_button"
+        android:background="@drawable/transparent_button_white"
         android:textColor="#FFFFFF" />
 
     <!-- Next Button -->

@@ -8,7 +8,13 @@ import retrofit2.http.Url
 interface ApiService {
     @POST
     fun registerUser(@Url url: String, @Body body: RegisterRequestBody): Call<ApiResponse>
+
+    @POST
+    fun loginUser(@Url url: String, @Body body: RegisterRequestBody): Call<AuthResponse>
 }
+
+
+
 
 
 

@@ -16,55 +16,34 @@
         android:src="@drawable/icon" />
 
     <TextView
-        android:id="@+id/registerTitle"
+        android:id="@+id/loginTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/logoImageView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="Regístrate"
+        android:text="Ingresa a tu cuenta"
         android:textSize="25sp"
         android:textColor="@color/black"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/registerSubtitle"
+        android:id="@+id/loginSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/registerTitle"
+        android:layout_below="@id/loginTitle"
         android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="Por favor completa los campos. Todos son requeridos"
+        android:text="Por favor. Inicia sesión para continuar"
         android:textSize="14sp"
         android:textColor="@color/black"
         android:layout_centerHorizontal="true" />
 
     <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/registerSubtitle"
-        android:layout_marginTop="16dp"
-        android:hint="Correo electrónico"
-        android:paddingStart="20dp"
-        android:inputType="textEmailAddress"
-        android:background="@drawable/rounded_edittext"/>
-
-    <ImageView
-        android:id="@+id/emailStatus"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignTop="@id/emailEditText"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="16dp"
-        android:visibility="gone" />
-
-    <EditText
         android:id="@+id/usernameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/emailEditText"
+        android:layout_below="@id/loginSubtitle"
         android:layout_marginTop="25dp"
         android:hint="Nombre de usuario"
         android:paddingStart="20dp"
@@ -112,72 +91,111 @@
         android:layout_marginEnd="55dp"
         android:visibility="gone" />
 
-    <EditText
-        android:id="@+id/confirmPasswordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/passwordEditText"
-        android:layout_marginTop="25dp"
-        android:hint="Confirma tu contraseña"
-        android:paddingStart="20dp"
-        android:inputType="textPassword"
-        android:background="@drawable/rounded_edittext"/>
-
-    <ImageView
-        android:id="@+id/confirmPasswordToggle"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignTop="@+id/confirmPasswordEditText"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="14dp"
-        android:src="@drawable/ic_eye"/>
-
-    <ImageView
-        android:id="@+id/confirmPasswordStatus"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignTop="@id/confirmPasswordEditText"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="55dp"
-        android:visibility="gone" />
-
     <CheckBox
-        android:id="@+id/termsCheckBox"
+        android:id="@+id/RememberCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/confirmPasswordEditText"
-        android:layout_marginTop="30dp"
-        android:text="Estoy de acuerdo con los Términos y condiciones"
+        android:layout_below="@id/passwordEditText"
+        android:layout_marginTop="42dp"
+        android:text="Recuérdame"
         android:textSize="13sp"
         android:textStyle="bold"
         android:buttonTint="@color/checkbox_color"/>
 
+    <TextView
+        android:id="@+id/forgotpasswordTtle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/passwordEditText"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="180dp"
+        android:gravity="center"
+        android:text="Reestablece tu contraseña"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="#FF0000" />
+
     <Button
-        android:id="@+id/registerButton"
+        android:id="@+id/loginButton"
         android:layout_width="350dp"
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/termsCheckBox"
-        android:layout_marginTop="30dp"
-        android:text="REGISTRARME"
+        android:layout_below="@id/RememberCheckBox"
+        android:layout_marginTop="39dp"
+        android:text="INICIAR SESION"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="@drawable/button_background_red"
         android:textColor="#FFFF" />
 
     <TextView
-        android:id="@+id/register_text"
+        android:id="@+id/loginOptionsSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/registerButton"
+        android:layout_below="@id/loginButton"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="O puedes iniciar sesion con"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:id="@+id/social_buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/loginOptionsSubtitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/facebookButton"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_facebook"
+            android:contentDescription="Facebook"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/googleButton"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_google"
+            android:contentDescription="Google"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerInside" />
+
+        <ImageButton
+            android:id="@+id/twitterButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_twitter"
+            android:contentDescription="Twitter"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/login_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/social_buttons_layout"
         android:layout_marginTop="30dp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:textColor="#000000" />
 
 </RelativeLayout>
+
 
 
 

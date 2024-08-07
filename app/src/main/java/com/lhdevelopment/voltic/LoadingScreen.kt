@@ -16,5 +16,22 @@ class LoadingScreen : ComponentActivity() {
             startActivity(intent)
             finish()
         }, 2000)
+
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        val isRegistered = sharedPreferences.getBoolean("isRegistered", false)
+
+        if (isRegistered) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this, LoginScreen::class.java)
+                startActivity(intent)
+                finish()
+            }, 2000)
+        } else {
+            Handler(Looper.getMainLooper()).postDelayed({
+                val intent = Intent(this, WelcomeScreen1::class.java)
+                startActivity(intent)
+                finish()
+            }, 2000)
+        }
     }
 }

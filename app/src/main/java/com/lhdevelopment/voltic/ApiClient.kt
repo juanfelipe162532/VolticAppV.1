@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiClient {
-    private const val BASE_URL = "https://bbsozgku32.execute-api.us-east-1.amazonaws.com/Stage1-Registration/"
+    private const val BASE_URL = "https://ykyoaekhp9.execute-api.us-east-1.amazonaws.com/Stage1/registration/"
 
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
