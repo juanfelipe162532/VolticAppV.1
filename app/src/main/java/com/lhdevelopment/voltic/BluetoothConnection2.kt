@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.lhdevelopment.voltic
 
 import android.Manifest
@@ -155,7 +157,7 @@ class BluetoothConnection2 : ComponentActivity() {
         devicesContainer.addView(deviceView)
     }
 
-    @SuppressLint("MissingPermission")
+    @SuppressLint("MissingPermission", "InflateParams")
     private fun showDeviceInfoBottomSheet(device: BluetoothDevice) {
         val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet_device_info, null)
         val bottomSheetDialog = BottomSheetDialog(this)
@@ -210,18 +212,20 @@ class BluetoothConnection2 : ComponentActivity() {
                 bluetoothSocket?.connect()
                 runOnUiThread {
                     Toast.makeText(this, "Conectado a ${device.name}", Toast.LENGTH_SHORT).show()
-
+                    navigateToMainPanel(true)
                 }
                 readDataFromDevice(bluetoothSocket)
             } catch (e: IOException) {
                 Log.e("BluetoothConnection2", "Error al conectar con ${device.name}", e)
                 runOnUiThread {
                     Toast.makeText(this, "Error al conectar con ${device.name}", Toast.LENGTH_SHORT).show()
+                    navigateToMainPanel(false)
                 }
                 try {
                     bluetoothSocket?.close()
                 } catch (closeException: IOException) {
                     Log.e("BluetoothConnection2", "Error al cerrar el socket", closeException)
+                    navigateToMainPanel(false)
                 }
             }
         }.start()
@@ -271,27 +275,27 @@ class BluetoothConnection2 : ComponentActivity() {
         unregisterReceiver(receiver)
     }
 
+    @Deprecated("This method has been deprecated in favor of using the Activity Result API\n      which brings increased type safety via an {@link ActivityResultContract} and the prebuilt\n      contracts for common intents available in\n      {@link androidx.activity.result.contract.ActivityResultContracts}, provides hooks for\n      testing, and allow receiving results in separate, testable classes independent from your\n      activity. Use\n      {@link #registerForActivityResult(ActivityResultContract, ActivityResultCallback)}\n      with the appropriate {@link ActivityResultContract} and handling the result in the\n      {@link ActivityResultCallback#onActivityResult(Object) callback}.")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Bluetooth habilitado", Toast.LENGTH_SHORT).show()
                 startDiscovery()
-                navigateToMainPanel()
             } else {
                 Toast.makeText(this, "Bluetooth no habilitado", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun navigateToMainPanel() {
+    private fun navigateToMainPanel(isConnected: Boolean) {
         val intent = Intent(this, MainPanel::class.java)
+        intent.putExtra("EXTRA_BT_CONNECTED", isConnected)
 
         // Obtén el contexto de las animaciones de la transición
         val options = ActivityOptions.makeCustomAnimation(this, R.anim.fade_in, R.anim.fade_out)
 
         startActivity(intent, options.toBundle())
-
         finish()
     }
 
@@ -301,6 +305,7 @@ class BluetoothConnection2 : ComponentActivity() {
         private const val REQUEST_ENABLE_BT = 1
     }
 }
+
 
 
 

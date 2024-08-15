@@ -11,27 +11,30 @@ class LoadingScreen : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading_screen)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, WelcomeScreen1::class.java)
-            startActivity(intent)
-            finish()
-        }, 2000)
-
         val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
-        val isRegistered = sharedPreferences.getBoolean("isRegistered", false)
+        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
 
-        if (isRegistered) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                val intent = Intent(this, LoginScreen::class.java)
-                startActivity(intent)
-                finish()
-            }, 2000)
-        } else {
-            Handler(Looper.getMainLooper()).postDelayed({
-                val intent = Intent(this, WelcomeScreen1::class.java)
-                startActivity(intent)
-                finish()
-            }, 2000)
-        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            val intent = when {
+                isFirstRun -> {
+                    // Si es la primera vez que se ejecuta la app, muestra la pantalla de bienvenida.
+                    sharedPreferences.edit().putBoolean("isFirstRun", false).apply()
+                    Intent(this, WelcomeScreen1::class.java)
+                }
+                isLoggedIn -> {
+                    // Si el usuario ya ha iniciado sesión y seleccionó "Recordar usuario", navega a la pantalla de conexión Bluetooth.
+                    Intent(this, BluetoothConnection1::class.java)
+                }
+                else -> {
+                    // Si no ha iniciado sesión, muestra la pantalla de inicio de sesión.
+                    Intent(this, LoginScreen::class.java)
+                }
+            }
+            startActivity(intent)
+            finish() // Cierra la pantalla de carga para que no se vuelva a mostrar al presionar "Atrás".
+        }, 2000) // Retraso de 2 segundos para mostrar la pantalla de carga.
     }
 }
+
+

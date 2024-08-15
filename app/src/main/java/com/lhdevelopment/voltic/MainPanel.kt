@@ -7,21 +7,30 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AnimationUtils
-import androidx.activity.ComponentActivity
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.activity.ComponentActivity
 
 class MainPanel : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mainpanel)
 
         val halfMoonImageView = findViewById<ClippingImageView>(R.id.speedMeterShape)
         val connectedIcon = findViewById<ImageView>(R.id.connectedIcon)
+        val disconnectedIcon = findViewById<ImageView>(R.id.disconnectedIcon)
         val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
+        val speedMeterNumbers2 = findViewById<ImageView>(R.id.speedMeter_numbers)
         val speedMeterMetric = findViewById<TextView>(R.id.speedMeterMetric)
-        val connectionStatus = findViewById<RelativeLayout>(R.id.connectionStatus)
+        val connectionStatusValidation = findViewById<RelativeLayout>(R.id.connectionStatusValidation)
+        val connectionStatusTrue = findViewById<RelativeLayout>(R.id.connectionStatusTrue)
+        val connectionStatusFalse = findViewById<RelativeLayout>(R.id.connectionStatusFalse)
+        val validationIcon = findViewById<ImageView>(R.id.ValidationIcon)
+
+        // Obtener si la conexión Bluetooth fue exitosa desde el Intent
+        val isBluetoothConnected = intent.getBooleanExtra("EXTRA_BT_CONNECTED", false)
 
         // Usar un ViewTreeObserver para asegurar que la vista esté medida antes de iniciar la animación
         halfMoonImageView.viewTreeObserver.addOnGlobalLayoutListener(
@@ -32,9 +41,9 @@ class MainPanel : ComponentActivity() {
 
                     // Crear la animación de recorte
                     val animator = ObjectAnimator.ofFloat(halfMoonImageView, "revealProgress", 0f, 1f).apply {
-                        duration = 2000 // Duración de la animación en milisegundos
+                        duration = 1000 // Duración de la animación en milisegundos
                         interpolator = AccelerateDecelerateInterpolator() // Interpolador para animación suave
-                        startDelay = 1000 // Retardo antes de que comience la animación
+                        startDelay = 500 // Retardo antes de que comience la animación
                     }
 
                     // Iniciar la animación de recorte
@@ -51,18 +60,39 @@ class MainPanel : ComponentActivity() {
                             // Cambiar la visibilidad a VISIBLE antes de iniciar la animación de desvanecimiento
                             speedMeterNumbers.visibility = View.VISIBLE
                             speedMeterMetric.visibility = View.VISIBLE
-                            connectedIcon.visibility = View.VISIBLE
-                            connectionStatus.visibility = View.VISIBLE
+                            connectionStatusValidation.visibility = View.VISIBLE
+                            speedMeterNumbers2.visibility = View.VISIBLE
 
                             // Aplicar la animación de entrada
                             speedMeterNumbers.startAnimation(fadeInAnimation)
                             speedMeterMetric.startAnimation(fadeInAnimation)
-                            connectedIcon.startAnimation(fadeInAnimation)
-                            connectionStatus.startAnimation(fadeInAnimation)
+                            speedMeterNumbers2.startAnimation(fadeInAnimation)
+
+                            // Animación de validación: hacer girar el icono de validación
+                            val rotationAnimation = ObjectAnimator.ofFloat(validationIcon, "rotation", 0f, 360f).apply {
+                                duration = 1000 // Duración de la animación de rotación
+                                repeatCount = ObjectAnimator.INFINITE
+                                interpolator = AccelerateDecelerateInterpolator()
+                                start()
+                            }
+
+                            // Validación de conexión Bluetooth
+                            validationIcon.postDelayed({
+                                rotationAnimation.cancel() // Detener la animación de rotación
+                                connectionStatusValidation.visibility = View.GONE // Ocultar la validación
+
+                                if (isBluetoothConnected) {
+                                    connectionStatusTrue.visibility = View.VISIBLE // Mostrar la conexión exitosa
+                                    connectedIcon.startAnimation(fadeInAnimation) // Animación de entrada para el icono conectado
+                                } else {
+                                    connectionStatusFalse.visibility = View.VISIBLE // Mostrar la conexión fallida
+                                    disconnectedIcon.startAnimation(fadeInAnimation) // Animación de entrada para el icono desconectado
+                                }
+                            }, 3000) // 3 segundos de retraso (simulación de la validación)
 
                             // Animación de cambio de números
-                            val numberAnimator = ValueAnimator.ofFloat(0f, 25f).apply {
-                                duration = 3000 // Duración de la animación
+                            val numberAnimator = ValueAnimator.ofFloat(0f, 10f).apply {
+                                duration = 1500 // Duración de la animación
                                 interpolator = AccelerateDecelerateInterpolator() // Interpolador para animación suave
 
                                 addUpdateListener { animation ->
@@ -72,8 +102,8 @@ class MainPanel : ComponentActivity() {
                             }
 
                             // Animación inversa
-                            val reverseNumberAnimator = ValueAnimator.ofFloat(25f, 0f).apply {
-                                duration = 3000 // Duración de la animación
+                            val reverseNumberAnimator = ValueAnimator.ofFloat(10f, 0f).apply {
+                                duration = 1500 // Duración de la animación
                                 interpolator = AccelerateDecelerateInterpolator() // Interpolador para animación suave
 
                                 addUpdateListener { animation ->
@@ -106,6 +136,9 @@ class MainPanel : ComponentActivity() {
         )
     }
 }
+
+
+
 
 
 

@@ -25,7 +25,6 @@ class ClippingImageView @JvmOverloads constructor(
     }
 
     fun setRevealProgress(progress: Float) {
-        Log.d("ClippingImageView", "setRevealProgress called with progress = $progress")
         revealProgress = progress
         invalidate()
     }

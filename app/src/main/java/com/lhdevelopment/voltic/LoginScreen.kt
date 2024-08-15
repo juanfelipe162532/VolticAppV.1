@@ -74,22 +74,6 @@ class LoginScreen : ComponentActivity() {
                 Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
             }
         }
-
-        // Verifica si el usuario está registrado y quiere ser recordado
-        checkRememberMe()
-    }
-
-    private fun checkRememberMe() {
-        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val username = sharedPreferences.getString("username", "")
-        val password = sharedPreferences.getString("password", "")
-
-        if (isLoggedIn && username != null && password != null) {
-            // Si el usuario está registrado y quiere ser recordado, iniciar sesión automáticamente
-            val fullUrl = "https://ykyoaekhp9.execute-api.us-east-1.amazonaws.com/Stage1/login/"
-            loginUser(fullUrl, username, password, rememberMe = true)
-        }
     }
 
     private fun loginUser(fullUrl: String, username: String, password: String, rememberMe: Boolean) {
@@ -108,12 +92,7 @@ class LoginScreen : ComponentActivity() {
                     Toast.makeText(this@LoginScreen, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
 
                     if (rememberMe) {
-                        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
-                        val editor = sharedPreferences.edit()
-                        editor.putBoolean("isLoggedIn", true)
-                        editor.putString("username", username)
-                        editor.putString("password", password)
-                        editor.apply()
+                        saveUserCredentials(username, password)
                     }
 
                     navigateToBluetoothConnection()
@@ -129,6 +108,16 @@ class LoginScreen : ComponentActivity() {
             }
         })
     }
+
+    private fun saveUserCredentials(username: String, password: String) {
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLoggedIn", true)
+        editor.putString("username", username)
+        editor.putString("password", password)
+        editor.apply()
+    }
+
     private fun togglePasswordVisibility(passwordEditText: EditText, toggle: ImageView) {
         if (passwordEditText.transformationMethod is PasswordTransformationMethod) {
             passwordEditText.transformationMethod = HideReturnsTransformationMethod.getInstance()
@@ -143,9 +132,10 @@ class LoginScreen : ComponentActivity() {
     private fun navigateToBluetoothConnection() {
         val intent = Intent(this, BluetoothConnection1::class.java)
         startActivity(intent)
-        finish() // Opcional: Llama a finish() si quieres cerrar la pantalla de registro
+        finish() // Llama a finish() para cerrar la pantalla de inicio de sesión
     }
 }
+
 
 
 
