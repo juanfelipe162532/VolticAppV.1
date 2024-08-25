@@ -33,7 +33,7 @@ class BluetoothConnection1 : ComponentActivity() {
 
         // Verificar si es la primera vez que el usuario ingresa
         val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
-        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", false)
 
         if (!isFirstRun) {
             navigateToBluetoothConnection2()
@@ -65,10 +65,11 @@ class BluetoothConnection1 : ComponentActivity() {
 
         logoutDialog.visibility = View.GONE
 
-        // Actualizar bandera de primera ejecución
+     /*   // Actualizar bandera de primera ejecución
         val editor = sharedPreferences.edit()
         editor.putBoolean("isFirstRun", false)
         editor.apply()
+        */
     }
 
     @Deprecated("Deprecated in Java")
@@ -147,7 +148,6 @@ class BluetoothConnection1 : ComponentActivity() {
         if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 Toast.makeText(this, "Permisos concedidos", Toast.LENGTH_SHORT).show()
-                navigateToBluetoothConnection2()
             } else {
                 Toast.makeText(this, "Permisos denegados", Toast.LENGTH_SHORT).show()
             }

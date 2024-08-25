@@ -71,6 +71,8 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.lottie)
     implementation(libs.material)
+    implementation(libs.play.services.location)
+    implementation(libs.jbcrypt)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

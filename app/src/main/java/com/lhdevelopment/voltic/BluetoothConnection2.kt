@@ -46,6 +46,10 @@ class BluetoothConnection2 : ComponentActivity() {
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
 
         if (fineLocationGranted && coarseLocationGranted) {
+            if (!bluetoothAdapter?.isEnabled!!) {
+                val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+            }
             startDiscovery()
         } else {
             Toast.makeText(this, "Permisos de ubicación necesarios no concedidos", Toast.LENGTH_SHORT).show()

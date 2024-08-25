@@ -23,6 +23,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import org.json.JSONObject
+import org.mindrot.jbcrypt.BCrypt
 
 private const val TAG = "LoginScreen"
 
@@ -76,6 +77,8 @@ class LoginScreen : ComponentActivity() {
         }
     }
 
+
+
     private fun loginUser(fullUrl: String, username: String, password: String, rememberMe: Boolean) {
         val userJsonObject = JSONObject().apply {
             put("Nombre_Usuario", username)
@@ -90,11 +93,10 @@ class LoginScreen : ComponentActivity() {
                     val authResponse = response.body()
                     Log.d(TAG, "Respuesta del servidor: ${authResponse?.message}")
                     Toast.makeText(this@LoginScreen, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-
+                    navigateToBluetoothConnection()
                     if (rememberMe) {
                         saveUserCredentials(username, password)
                     }
-
                     navigateToBluetoothConnection()
                 } else {
                     Log.e(TAG, "Error en el inicio de sesión: ${response.code()}")

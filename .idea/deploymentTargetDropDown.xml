@@ -9,7 +9,20 @@
         <State />
       </entry>
       <entry key="Voltic App V.1">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\felip\.android\avd\Pixel_8_Pro_API_31.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-08-22T02:11:09.372181500Z" />
+        </State>
       </entry>
     </value>
   </component>

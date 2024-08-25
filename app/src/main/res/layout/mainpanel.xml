@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,6 +8,17 @@
         android:layout_height="1000dp"
         android:background="@drawable/gradient_overlay_2"
         android:layout_alignParentBottom="true" />
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="invisible"/>
 
     <RelativeLayout
         android:id="@+id/connectionStatusValidation"
@@ -30,21 +40,20 @@
 
         <TextView
             android:id="@+id/ValidationText"
-            android:layout_width="400dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/ValidationIcon"
+            android:layout_toEndOf="@id/ValidationIcon"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
             android:text="VERIFICANDO CONEXIÓN"
             android:textColor="@color/white"
             android:textStyle="bold"/>
-
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/connectionStatusTrue"
-        android:layout_width="150dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
@@ -56,7 +65,7 @@
             android:layout_height="30dp"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="30dp"
             android:src="@drawable/conected_icon"
             android:visibility="visible" />
 
@@ -64,7 +73,7 @@
             android:id="@+id/connectedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/connectedIcon"
+            android:layout_toEndOf="@id/connectedIcon"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
@@ -75,7 +84,7 @@
 
     <RelativeLayout
         android:id="@+id/connectionStatusFalse"
-        android:layout_width="152dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
@@ -92,22 +101,31 @@
             android:visibility="visible" />
 
         <TextView
-            android:id="@+id/connectedText"
+            android:id="@+id/disconnectedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/connectedIcon"
+            android:layout_toEndOf="@id/disconnectedIcon"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="11dp"
             android:text="DESCONECTADO"
-            android:textColor="#ACACAC"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"/>
     </RelativeLayout>
 
+    <ImageView
+        android:id="@+id/exitIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/exit_icon"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="285dp"
+        android:visibility="invisible"/>
+
     <com.lhdevelopment.voltic.ClippingImageView
         android:id="@+id/speedMeterShape"
-        android:layout_width="450dp"
-        android:layout_height="150dp"
+        android:layout_width="445dp"
+        android:layout_height="138dp"
         android:layout_marginTop="150dp"
         android:src="@drawable/speed_meter_shape" />
 
@@ -115,7 +133,7 @@
         android:id="@+id/speedMeter_numbers"
         android:layout_width="410dp"
         android:layout_height="250dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="78dp"
         android:src="@drawable/speed_meter_numbers"
         android:visibility="gone"/>
 
@@ -136,11 +154,405 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/speedMeterNumbers"
+        android:layout_below="@id/speedMeterNumbers"
         android:text="KM/H"
         android:textSize="30sp"
         android:textColor="@color/white"
         android:fontFamily="@font/speed"
         android:visibility="gone"/>
-</RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/data_rectangle"
+        android:layout_width="325dp"
+        android:layout_height="100dp"
+        android:layout_below="@id/speedMeterMetric"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/data_rectangle"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/vehicledataConnectionValidation"
+                android:layout_width="205dp"
+                android:layout_height="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="invisible">
+                <ImageView
+                    android:id="@+id/vehicledataValidationIcon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/validation_icon"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/dataValidationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/vehicledataValidationIcon"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="5dp"
+                    android:text="Obteniendo informacion"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="325dp"
+                android:layout_height="65dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="visible">
+
+                <RelativeLayout
+                    android:id="@+id/vehicledataConnectionTrue"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/batterydataText"
+                        android:layout_width="70dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="3dp"
+                        android:text="Bateria"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="@android:color/white"
+                        android:textStyle="normal"
+                        android:textSize="16sp"
+                        android:visibility="invisible"/>
+                    <TextView
+                        android:id="@+id/distancedataText"
+                        android:layout_width="75dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="3dp"
+                        android:text="Distancia"
+                        android:layout_toEndOf="@+id/batterydataText"
+                        android:layout_marginLeft="36dp"
+                        android:textColor="@android:color/white"
+                        android:textStyle="normal"
+                        android:textSize="16sp"
+                        android:visibility="invisible"/>
+                    <TextView
+                        android:id="@+id/timedataText"
+                        android:layout_width="75dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="3dp"
+                        android:text="Tiempo"
+                        android:layout_toEndOf="@+id/distancedataText"
+                        android:layout_marginLeft="36dp"
+                        android:textColor="@android:color/white"
+                        android:textStyle="normal"
+                        android:textSize="16sp"
+                        android:visibility="invisible"/>
+
+                    <TextView
+                        android:id="@+id/batterydataNumbers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/batterydataText"
+                        android:layout_marginTop="3dp"
+                        android:text="0.0%"
+                        android:layout_marginLeft="18dp"
+                        android:textColor="@android:color/white"
+                        android:fontFamily="@font/speed"
+                        android:textSize="40sp"
+                        android:visibility="invisible"/>
+                    <TextView
+                        android:id="@+id/distancedataNumbers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.0"
+                        android:layout_toEndOf="@+id/batterydataNumbers"
+                        android:layout_marginLeft="40dp"
+                        android:layout_below="@id/distancedataText"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@android:color/white"
+                        android:fontFamily="@font/speed"
+                        android:textSize="40sp"
+                        android:visibility="invisible"/>
+                    <TextView
+                        android:id="@+id/distancedatakm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km"
+                        android:layout_toEndOf="@+id/distancedataNumbers"
+                        android:layout_marginLeft="3dp"
+                        android:layout_below="@id/distancedataText"
+                        android:layout_marginTop="18dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="15sp"
+                        android:visibility="invisible"/>
+
+                    <TextView
+                        android:id="@+id/timedataNumbers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0:0"
+                        android:layout_toEndOf="@+id/distancedataNumbers"
+                        android:layout_marginLeft="70dp"
+                        android:layout_below="@id/timedataText"
+                        android:layout_marginTop="3dp"
+                        android:textColor="@android:color/white"
+                        android:fontFamily="@font/speed"
+                        android:textSize="40sp"
+                        android:visibility="invisible"/>
+                    <TextView
+                        android:id="@+id/timedatamin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="min"
+                        android:layout_toEndOf="@+id/timedataNumbers"
+                        android:layout_marginLeft="3dp"
+                        android:layout_below="@id/timedataText"
+                        android:layout_marginTop="18dp"
+                        android:textColor="@android:color/white"
+                        android:textSize="15sp"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/menu_icons"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/data_rectangle"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" >
+
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent" >
+        </Button>
+
+        <RelativeLayout
+            android:id="@+id/rectangle1"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:background="@drawable/data_rectangle"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/stadisticsIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/stadistics_icon" />
+
+            <TextView
+                android:id="@+id/buttonText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/stadisticsIcon"
+                android:layout_centerHorizontal="true"
+                android:text="Estadisticas"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent" >
+        </Button>
+
+        <RelativeLayout
+            android:id="@+id/rectangle2"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/data_rectangle"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/historyIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/history_icon" />
+
+            <TextView
+                android:id="@+id/buttonText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/historyIcon"
+                android:layout_centerHorizontal="true"
+                android:text="Historial"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_marginLeft="222dp"
+            android:background="@android:color/transparent" >
+        </Button>
+
+        <RelativeLayout
+            android:id="@+id/rectangle3"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="222dp"
+            android:background="@drawable/data_rectangle"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/servicesIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/services_icon" />
+
+            <TextView
+                android:id="@+id/buttonText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/servicesIcon"
+                android:layout_centerHorizontal="true"
+                android:text="Servicios"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button4"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/rectangle1"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/transparent" >
+        </Button>
+
+        <RelativeLayout
+            android:id="@+id/rectangle4"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/rectangle1"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/data_rectangle"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/settingsIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/settings_icon" />
+
+            <TextView
+                android:id="@+id/buttonText4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/settingsIcon"
+                android:layout_centerHorizontal="true"
+                android:text="Ajustes"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button5"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/rectangle2"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/transparent" >
+        </Button>
+
+        <RelativeLayout
+            android:id="@+id/rectangle5"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/rectangle2"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/data_rectangle"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/mapIcon"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/map_icon" />
+
+            <TextView
+                android:id="@+id/buttonText5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mapIcon"
+                android:layout_centerHorizontal="true"
+                android:text="Mapa"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/button6"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/rectangle3"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="222dp"
+            android:background="@android:color/transparent" >
+        </Button>
+
+        <RelativeLayout
+            android:id="@+id/rectangle6"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/rectangle3"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="222dp"
+            android:background="@drawable/data_rectangle"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/batteryIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:src="@drawable/battery_icon" />
+
+            <TextView
+                android:id="@+id/buttonText6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/batteryIcon"
+                android:layout_centerHorizontal="true"
+                android:text="Bateria"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.3.1"
+agp = "8.5.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.0"
 junit = "4.13.2"
@@ -20,6 +20,8 @@ appcompat = "1.7.0"
 cardview = "1.0.0"
 lottie = "6.4.1"
 material = "1.13.0-alpha04"
+playServicesLocation = "21.3.0"
+jbcrypt = "0.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +50,8 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-cardview = { group = "androidx.cardview", name = "cardview", version.ref = "cardview" }
 lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+jbcrypt = { group = "org.mindrot", name = "jbcrypt", version.ref = "jbcrypt" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
