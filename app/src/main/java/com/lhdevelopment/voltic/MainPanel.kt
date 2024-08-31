@@ -3,6 +3,7 @@ package com.lhdevelopment.voltic
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import android.content.Intent
@@ -29,6 +30,12 @@ import java.util.*
 @Suppress("DEPRECATION")
 class MainPanel : ComponentActivity() {
 
+    private var speedChangeTime: Long = 0
+    private var zeroSpeedStartTime: Long = 0
+    private var isSpeedNonZero: Boolean = false
+    private var isSpeedZeroMoreThanFiveMinutes: Boolean = false
+    private val timeDataNumbers: TextView by lazy { findViewById(R.id.timedataNumbers) }
+
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private var isTrackingSpeed = false
@@ -41,6 +48,9 @@ class MainPanel : ComponentActivity() {
             handler.postDelayed(this, 1000) // Actualiza cada segundo
         }
     }
+
+    private var totalDistance: Float = 0f
+    private var lastLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +92,6 @@ class MainPanel : ComponentActivity() {
         val distanceDataKm = findViewById<TextView>(R.id.distancedatakm)
         val timeDataText = findViewById<TextView>(R.id.timedataText)
         val timeDataNumbers = findViewById<TextView>(R.id.timedataNumbers)
-        val timeDataMin = findViewById<TextView>(R.id.timedatamin)
 
         exitIcon.setOnClickListener {
             finishAffinity()
@@ -145,6 +154,7 @@ class MainPanel : ComponentActivity() {
                     animator.addListener(object : android.animation.Animator.AnimatorListener {
                         override fun onAnimationStart(animation: android.animation.Animator) {}
 
+                        @SuppressLint("DefaultLocale")
                         override fun onAnimationEnd(animation: android.animation.Animator) {
                             // Cambiar la visibilidad a VISIBLE antes de iniciar la animación de desvanecimiento
                             //timeTextView
@@ -190,10 +200,6 @@ class MainPanel : ComponentActivity() {
                             timeDataNumbers.visibility = View.VISIBLE
                             timeDataNumbers.alpha = 0f
                             timeDataNumbers.animate().alpha(1f).setDuration(500).setStartDelay(1700).start()
-
-                            timeDataMin.visibility = View.VISIBLE
-                            timeDataMin.alpha = 0f
-                            timeDataMin.animate().alpha(1f).setDuration(500).setStartDelay(1700).start()
 
                             //rectangle1
                             stadisticsButton.visibility = View.VISIBLE
@@ -311,14 +317,65 @@ class MainPanel : ComponentActivity() {
 
         isTrackingSpeed = true
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 0.1f, object : LocationListener {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, object : LocationListener {
+            @SuppressLint("SetTextI18n")
             override fun onLocationChanged(location: Location) {
-                if (isTrackingSpeed) {
-                    val speedKmh = location.speed * 3.6 // Convierte m/s a km/h
-                    val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
-                    speedMeterNumbers.text = String.format("%.1f", speedKmh)
+                val speedKmh = location.speed * 3.6 // Convierte m/s a km/h
+                val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
+
+                // Muestra la velocidad
+                speedMeterNumbers.text = String.format("%.1f", speedKmh)
+
+                // Verifica si la velocidad ha cambiado de 0
+                if (speedKmh > 0) {
+                    if (!isSpeedNonZero) {
+                        // Registra el tiempo cuando la velocidad cambia de 0
+                        speedChangeTime = System.currentTimeMillis()
+                        isSpeedNonZero = true
+                        isSpeedZeroMoreThanFiveMinutes = false // Restablece el estado
+                    }
+                } else {
+                    if (isSpeedNonZero) {
+                        // Registra el tiempo cuando la velocidad se vuelve 0
+                        zeroSpeedStartTime = System.currentTimeMillis()
+                        isSpeedNonZero = false
+                    }
+                }
+
+                // Calcula la distancia recorrida si lastLocation no es nulo
+                lastLocation?.let {
+                    val distance = it.distanceTo(location)
+                    totalDistance += distance
+                    val distanceDataNumbers = findViewById<TextView>(R.id.distancedataNumbers)
+                    distanceDataNumbers.text = String.format("%.2f", totalDistance / 1000)
+                }
+
+                // Actualiza la última ubicación
+                lastLocation = location
+
+                // Calcula el tiempo transcurrido
+                if (isSpeedNonZero && speedChangeTime > 0) {
+                    val elapsedTime = System.currentTimeMillis() - speedChangeTime
+                    val minutes = (elapsedTime / 1000) / 60
+                    val seconds = (elapsedTime / 1000) % 60
+                    timeDataNumbers.text = String.format("%02d:%02d", minutes, seconds)
+                } else if (!isSpeedNonZero) {
+                    // Calcula el tiempo transcurrido desde que la velocidad se volvió 0
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - zeroSpeedStartTime > 5 * 60 * 1000) { // 5 minutos en milisegundos
+                        timeDataNumbers.text = "00:00"
+                        isSpeedZeroMoreThanFiveMinutes = true
+                    } else {
+                        val elapsedTime = currentTime - zeroSpeedStartTime
+                        val minutes = (elapsedTime / 1000) / 60
+                        val seconds = (elapsedTime / 1000) % 60
+                        timeDataNumbers.text = String.format("%02d:%02d", minutes, seconds)
+                    }
+                } else {
+                    timeDataNumbers.text = "00:00" // Muestra 00:00 si no se ha registrado el tiempo de velocidad
                 }
             }
+
 
             override fun onProviderEnabled(provider: String) {}
             override fun onProviderDisabled(provider: String) {}
