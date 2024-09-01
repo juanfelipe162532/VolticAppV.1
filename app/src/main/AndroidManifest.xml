@@ -34,7 +34,17 @@
             android:exported="false"
             android:theme="@style/Theme.VolticAppV1" />
         <activity
-            android:name=".MapScreen"
+            android:name=".MapScreen3"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.VolticAppV1" />
+        <activity
+            android:name=".MapScreen2"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            android:theme="@style/Theme.VolticAppV1" />
+        <activity
+            android:name=".MapScreen1"
             android:screenOrientation="portrait"
             android:exported="false"
             android:theme="@style/Theme.VolticAppV1" />

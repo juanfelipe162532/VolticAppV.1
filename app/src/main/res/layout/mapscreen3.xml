@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="60dp"
-        android:text="¿Desde dónde quieres ir?"
+        android:text="¿Hacia dónde quieres ir?"
         android:textSize="27sp"
         android:textStyle="bold"
         android:textColor="@color/white" />
@@ -41,10 +41,9 @@
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="350dp"
-        android:layout_height="450dp"
+        android:layout_width="325dp"
+        android:layout_height="400dp"
         android:layout_below="@id/startPointSearch"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"/>
-
 </RelativeLayout>

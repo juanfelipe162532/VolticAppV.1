@@ -118,7 +118,7 @@ class MainPanel : ComponentActivity() {
         }
 
         button5.setOnClickListener {
-            val intent = Intent(this, MapScreen::class.java)
+            val intent = Intent(this, MapScreen1::class.java)
             startActivity(intent)
         }
 

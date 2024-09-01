@@ -1,5 +1,6 @@
 package com.lhdevelopment.voltic
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -19,15 +20,17 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapScreen : FragmentActivity(), OnMapReadyCallback {
+class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
     private lateinit var placesClient: PlacesClient
     private lateinit var mMap: GoogleMap
     private lateinit var autocompleteAdapter: PlacesAutoCompleteAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.mapscreen)
+        setContentView(R.layout.mapscreen2)
+
 
         // Inicializar la API de Google Places
         if (!Places.isInitialized()) {
@@ -37,7 +40,6 @@ class MapScreen : FragmentActivity(), OnMapReadyCallback {
 
         val autoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.startPointSearch)
         val backButton: Button = findViewById(R.id.backButton)
-
         val token = AutocompleteSessionToken.newInstance()
 
         autocompleteAdapter = PlacesAutoCompleteAdapter(this, placesClient)
@@ -75,7 +77,8 @@ class MapScreen : FragmentActivity(), OnMapReadyCallback {
 
         // Configuración del botón para regresar a MainPanel
         backButton.setOnClickListener {
-            // Regresar a MainPanel si es necesario
+            val intent = Intent(this, MapScreen2::class.java)
+            startActivity(intent)
         }
 
         // Configuración del fragmento del mapa
@@ -120,3 +123,4 @@ class MapScreen : FragmentActivity(), OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
     }
 }
+
