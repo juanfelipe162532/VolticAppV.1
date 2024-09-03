@@ -1,126 +1,161 @@
 package com.lhdevelopment.voltic
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.AutoCompleteTextView
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import androidx.fragment.app.FragmentActivity
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
-import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import com.google.android.libraries.places.api.model.Place
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.LatLngBounds
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
-    private lateinit var placesClient: PlacesClient
     private lateinit var mMap: GoogleMap
-    private lateinit var autocompleteAdapter: PlacesAutoCompleteAdapter
-
+    private val apiKey = "AIzaSyDLEaBvnGVCfUSa0dE_AoKPpjp57mWPNkg" // Reemplaza con tu clave de API
+    private lateinit var loadingScreen: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.mapscreen2)
+        setContentView(R.layout.mapscreen3)
 
-
-        // Inicializar la API de Google Places
-        if (!Places.isInitialized()) {
-            Places.initialize(applicationContext, "AIzaSyDLEaBvnGVCfUSa0dE_AoKPpjp57mWPNkg")
-        }
-        placesClient = Places.createClient(this)
-
-        val autoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.startPointSearch)
+        loadingScreen = findViewById(R.id.route_creation_loading_screen)
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         val backButton: Button = findViewById(R.id.backButton)
-        val token = AutocompleteSessionToken.newInstance()
+        mapFragment.getMapAsync(this)
 
-        autocompleteAdapter = PlacesAutoCompleteAdapter(this, placesClient)
-        autoCompleteTextView.setAdapter(autocompleteAdapter)
-        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
-            val placeId = autocompleteAdapter.getPlaceId(position)
-            if (placeId != null) {
-                fetchPlaceDetails(placeId)
-            }
-        }
-
-        autoCompleteTextView.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-                val query = s.toString()
-                if (query.isNotEmpty()) {
-                    val request = FindAutocompletePredictionsRequest.builder()
-                        .setSessionToken(token)
-                        .setQuery(query)
-                        .build()
-
-                    placesClient.findAutocompletePredictions(request)
-                        .addOnSuccessListener { response ->
-                            autocompleteAdapter.updatePredictions(response.autocompletePredictions)
-                        }
-                        .addOnFailureListener { exception ->
-                            // Manejo de errores
-                        }
-                }
-            }
-        })
-
-        // Configuración del botón para regresar a MainPanel
         backButton.setOnClickListener {
             val intent = Intent(this, MapScreen2::class.java)
             startActivity(intent)
         }
-
-        // Configuración del fragmento del mapa
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
     }
 
+
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        loadingScreen.visibility = View.VISIBLE
+        mMap.uiSettings.isZoomControlsEnabled = true
+        mMap.isMyLocationEnabled = true
+        mMap.uiSettings.isMyLocationButtonEnabled = true
+        showRoute(this)
+    }
 
-        // Verificar si hay coordenadas disponibles y centrar el mapa en ellas
-        val latitude = intent.getDoubleExtra("LATITUDE", 0.0)
-        val longitude = intent.getDoubleExtra("LONGITUDE", 0.0)
-        if (latitude != 0.0 && longitude != 0.0) {
-            val location = LatLng(latitude, longitude)
-            mMap.addMarker(MarkerOptions().position(location).title("Selected Location"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+    private fun showRoute(context: Context) {
+        val sharedPreferences = context.getSharedPreferences("MapPreferences", Context.MODE_PRIVATE)
+        val startLatitude = sharedPreferences.getString("START_LATITUDE", null)?.toDouble()
+        val startLongitude = sharedPreferences.getString("START_LONGITUDE", null)?.toDouble()
+        val endLatitude = sharedPreferences.getString("END_LATITUDE", null)?.toDouble()
+        val endLongitude = sharedPreferences.getString("END_LONGITUDE", null)?.toDouble()
+
+        if (startLatitude != null && startLongitude != null && endLatitude != null && endLongitude != null) {
+            val startLocation = LatLng(startLatitude, startLongitude)
+            val endLocation = LatLng(endLatitude, endLongitude)
+
+            mMap.addMarker(MarkerOptions().position(startLocation).title("Punto de Inicio"))
+            mMap.addMarker(MarkerOptions().position(endLocation).title("Punto de Fin"))
+
+            val retrofit = Retrofit.Builder()
+                .baseUrl("https://maps.googleapis.com/maps/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+
+            val service = retrofit.create(DirectionsService::class.java)
+            val call = service.getDirections(
+                "${startLatitude},${startLongitude}",
+                "${endLatitude},${endLongitude}",
+                apiKey
+            )
+
+            call.enqueue(object : retrofit2.Callback<DirectionsResponse> {
+                override fun onResponse(call: Call<DirectionsResponse>, response: retrofit2.Response<DirectionsResponse>) {
+                    if (response.isSuccessful) {
+                        val polyline = response.body()?.routes?.firstOrNull()?.overviewPolyline?.points
+                        if (polyline != null) {
+                            val decodedPath = decodePolyline(polyline)
+                            mMap.addPolyline(
+                                PolylineOptions()
+                                    .addAll(decodedPath)
+                                    .width(8f)
+                                    .color(Color.RED)
+                            )
+
+                            // Centrar el mapa para mostrar ambos puntos
+                            centerMapOnRoute(startLocation, endLocation)
+                            loadingScreen.visibility = View.GONE
+                        }
+                    } else {
+                        Log.d("RouteDisplay", "Error en la respuesta de la Directions API.")
+                    }
+                }
+
+                override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
+                    Log.d("RouteDisplay", "Fallo en la solicitud de la Directions API: ${t.message}")
+                }
+            })
+        } else {
+            Log.d("RouteDisplay", "No se encontraron coordenadas guardadas para la ruta.")
         }
     }
 
-    private fun fetchPlaceDetails(placeId: String) {
-        val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
-        val request = FetchPlaceRequest.builder(placeId, placeFields).build()
+    private fun centerMapOnRoute(startLocation: LatLng, endLocation: LatLng) {
+        // Crear un LatLngBounds.Builder para incluir ambos puntos
+        val builder = LatLngBounds.Builder()
+        builder.include(startLocation)
+        builder.include(endLocation)
 
-        placesClient.fetchPlace(request)
-            .addOnSuccessListener { response ->
-                val place = response.place
-                val latLng = place.latLng
-                if (latLng != null) {
-                    updateMapWithLocation(latLng.latitude, latLng.longitude)
-                }
-            }
-            .addOnFailureListener { exception ->
-                // Manejo de errores
-            }
+        // Construir el LatLngBounds
+        val bounds = builder.build()
+
+        // Crear un ajuste de cámara para incluir los dos puntos
+        val padding = 100 // Padding en píxeles
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+
+        // Mover la cámara para ajustar el mapa a los dos puntos
+        mMap.moveCamera(cameraUpdate)
     }
 
-    private fun updateMapWithLocation(latitude: Double, longitude: Double) {
-        val location = LatLng(latitude, longitude)
-        mMap.clear() // Limpia el mapa antes de agregar el nuevo marcador
-        mMap.addMarker(MarkerOptions().position(location).title("Selected Location"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+    private fun decodePolyline(encoded: String): List<LatLng> {
+        val poly = mutableListOf<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or ((b and 0x1f) shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lat += dlat
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or ((b and 0x1f) shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+            lng += dlng
+            poly.add(LatLng((lat.toDouble() / 1E5), (lng.toDouble() / 1E5)))
+        }
+        return poly
     }
 }
-

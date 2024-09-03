@@ -1,7 +1,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient_overlay_2">
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/startPointSearch"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/backButton"
@@ -9,41 +16,9 @@
         android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:background="@drawable/back_icon"/>
+        android:background="@drawable/back_icon_red"/>
+    <include
+        layout="@layout/route_creation_loading_screen"
+        android:id="@+id/route_creation_loading_screen"/>
 
-    <TextView
-        android:id="@+id/startPointTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:text="¿Hacia dónde quieres ir?"
-        android:textSize="27sp"
-        android:textStyle="bold"
-        android:textColor="@color/white" />
-
-    <AutoCompleteTextView
-        android:id="@+id/startPointSearch"
-        android:layout_width="381dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/startPointTitle"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/search_button"
-        android:completionThreshold="1"
-        android:dropDownHeight="wrap_content"
-        android:hint="Buscar..."
-        android:textColorHint="@color/white"
-        android:inputType="text"
-        android:textColor="@color/white"
-        android:padding="12dp" />
-
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="325dp"
-        android:layout_height="400dp"
-        android:layout_below="@id/startPointSearch"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"/>
 </RelativeLayout>

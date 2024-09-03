@@ -1,5 +1,6 @@
 package com.lhdevelopment.voltic
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -16,21 +17,24 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.location.LocationServices
 
 class MapScreen2 : FragmentActivity(), OnMapReadyCallback {
 
     private lateinit var placesClient: PlacesClient
     private lateinit var mMap: GoogleMap
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var autocompleteAdapter: PlacesAutoCompleteAdapter
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mapscreen2)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Inicializar la API de Google Places
         if (!Places.isInitialized()) {
@@ -40,7 +44,7 @@ class MapScreen2 : FragmentActivity(), OnMapReadyCallback {
 
         val autoCompleteTextView = findViewById<AutoCompleteTextView>(R.id.startPointSearch)
         val backButton: Button = findViewById(R.id.backButton)
-        val createRouteButton: Button = findViewById(R.id.createRouteButton)
+        val nextButton: Button = findViewById(R.id.nextButton)
         val token = AutocompleteSessionToken.newInstance()
 
         autocompleteAdapter = PlacesAutoCompleteAdapter(this, placesClient)
@@ -82,11 +86,10 @@ class MapScreen2 : FragmentActivity(), OnMapReadyCallback {
             startActivity(intent)
         }
 
-        createRouteButton.setOnClickListener {
+        nextButton.setOnClickListener {
             val intent = Intent(this, MapScreen3::class.java)
             startActivity(intent)
         }
-
 
 
         // Configuración del fragmento del mapa
@@ -94,17 +97,50 @@ class MapScreen2 : FragmentActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Verificar si hay coordenadas disponibles y centrar el mapa en ellas
+        // Habilitar controles de zoom
+        mMap.uiSettings.isZoomControlsEnabled = true
+
+        // Habilitar la ubicación actual y el botón de ubicación
+        mMap.isMyLocationEnabled = true
+        mMap.uiSettings.isMyLocationButtonEnabled = true
+
+        // Verificar si hay coordenadas disponibles desde el Intent y centrar el mapa en ellas
         val latitude = intent.getDoubleExtra("LATITUDE", 0.0)
         val longitude = intent.getDoubleExtra("LONGITUDE", 0.0)
         if (latitude != 0.0 && longitude != 0.0) {
             val location = LatLng(latitude, longitude)
             mMap.addMarker(MarkerOptions().position(location).title("Selected Location"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15f))
+        } else {
+            // Si no se proporcionan coordenadas, centrar el mapa en la ubicación actual
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f))
+                }
+            }
         }
+
+        // Agregar un listener para seleccionar un punto en el mapa
+        mMap.setOnMapClickListener { latLng ->
+            mMap.clear() // Limpiar el mapa antes de agregar el nuevo marcador
+            mMap.addMarker(MarkerOptions().position(latLng).title("Selected Point"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
+            saveCoordinatesToSharedPreferences(latLng.latitude, latLng.longitude)
+        }
+    }
+
+    private fun saveCoordinatesToSharedPreferences(latitude: Double, longitude: Double) {
+        val sharedPreferences = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("END_LATITUDE", latitude.toString())
+        editor.putString("END_LONGITUDE", longitude.toString())
+        editor.apply() // Asegúrate de aplicar los cambios
     }
 
     private fun fetchPlaceDetails(placeId: String) {

@@ -30,7 +30,6 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var autocompleteAdapter: PlacesAutoCompleteAdapter
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mapscreen1)
@@ -102,9 +101,6 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Habilitar controles de zoom
-        mMap.uiSettings.isZoomControlsEnabled = true
-
         // Habilitar la ubicación actual y el botón de ubicación
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
@@ -131,9 +127,18 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
             mMap.clear() // Limpiar el mapa antes de agregar el nuevo marcador
             mMap.addMarker(MarkerOptions().position(latLng).title("Selected Point"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+
+            saveCoordinatesToSharedPreferences(latLng.latitude, latLng.longitude)
         }
     }
 
+    private fun saveCoordinatesToSharedPreferences(latitude: Double, longitude: Double) {
+        val sharedPreferences = getSharedPreferences("MapPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("START_LATITUDE", latitude.toString())
+        editor.putString("START_LONGITUDE", longitude.toString())
+        editor.apply() // Asegúrate de aplicar los cambios
+    }
 
     private fun fetchPlaceDetails(placeId: String) {
         val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
