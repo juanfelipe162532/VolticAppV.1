@@ -115,7 +115,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                             mMap.addPolyline(
                                 PolylineOptions()
                                     .addAll(decodedPath)
-                                    .width(60f)
+                                    .width(30f)
                                     .color(Color.RED)
                             )
 
