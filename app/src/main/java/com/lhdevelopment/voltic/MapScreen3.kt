@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.os.Handler
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -17,24 +18,48 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.Marker
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+@Suppress("DEPRECATION")
 class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private val apiKey = "AIzaSyDLEaBvnGVCfUSa0dE_AoKPpjp57mWPNkg" // Reemplaza con tu clave de API
     private lateinit var loadingScreen: View
+    private var startMarker: Marker? = null
+    private val handler = Handler()
+    private val updateInterval: Long = 100
+    private val runnable = object : Runnable {
+        override fun run() {
+            updateCameraPosition()
+            handler.postDelayed(this, updateInterval)
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mapscreen3)
 
         loadingScreen = findViewById(R.id.route_creation_loading_screen)
+        loadingScreen.visibility = View.VISIBLE
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         val backButton: Button = findViewById(R.id.backButton)
+        val startRouteButton: Button = findViewById(R.id.startRouteButton)
+
+        LocationProvider.init(this)
+
+        startRouteButton.setOnClickListener {
+            handler.post(runnable)
+            start3DRouteView()
+        }
+
         mapFragment.getMapAsync(this)
+
 
         backButton.setOnClickListener {
             val intent = Intent(this, MapScreen2::class.java)
@@ -42,11 +67,9 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
-
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        loadingScreen.visibility = View.VISIBLE
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
@@ -64,7 +87,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
             val startLocation = LatLng(startLatitude, startLongitude)
             val endLocation = LatLng(endLatitude, endLongitude)
 
-            mMap.addMarker(MarkerOptions().position(startLocation).title("Punto de Inicio"))
+            addStartMarker(startLocation)
             mMap.addMarker(MarkerOptions().position(endLocation).title("Punto de Fin"))
 
             val retrofit = Retrofit.Builder()
@@ -80,15 +103,19 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
             )
 
             call.enqueue(object : retrofit2.Callback<DirectionsResponse> {
-                override fun onResponse(call: Call<DirectionsResponse>, response: retrofit2.Response<DirectionsResponse>) {
+                override fun onResponse(
+                    call: Call<DirectionsResponse>,
+                    response: retrofit2.Response<DirectionsResponse>
+                ) {
                     if (response.isSuccessful) {
-                        val polyline = response.body()?.routes?.firstOrNull()?.overviewPolyline?.points
+                        val polyline =
+                            response.body()?.routes?.firstOrNull()?.overviewPolyline?.points
                         if (polyline != null) {
                             val decodedPath = decodePolyline(polyline)
                             mMap.addPolyline(
                                 PolylineOptions()
                                     .addAll(decodedPath)
-                                    .width(8f)
+                                    .width(60f)
                                     .color(Color.RED)
                             )
 
@@ -102,12 +129,24 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                 }
 
                 override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
-                    Log.d("RouteDisplay", "Fallo en la solicitud de la Directions API: ${t.message}")
+                    Log.d(
+                        "RouteDisplay",
+                        "Fallo en la solicitud de la Directions API: ${t.message}"
+                    )
                 }
             })
         } else {
             Log.d("RouteDisplay", "No se encontraron coordenadas guardadas para la ruta.")
         }
+    }
+
+    private fun addStartMarker(location: LatLng) {
+        startMarker = mMap.addMarker(MarkerOptions().position(location).title("Punto de Inicio"))
+    }
+
+    private fun removeStartMarker() {
+        startMarker?.remove() // Elimina solo el marcador de inicio
+        startMarker = null
     }
 
     private fun centerMapOnRoute(startLocation: LatLng, endLocation: LatLng) {
@@ -120,11 +159,55 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         val bounds = builder.build()
 
         // Crear un ajuste de cámara para incluir los dos puntos
-        val padding = 100 // Padding en píxeles
+        val padding = 400 // Padding en píxeles
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
 
         // Mover la cámara para ajustar el mapa a los dos puntos
         mMap.moveCamera(cameraUpdate)
+    }
+
+    private fun start3DRouteView() {
+        removeStartMarker()
+        // Obtén la ubicación actual del LocationProvider
+        val currentLocation = LocationProvider.getCurrentLocation()
+
+        if (currentLocation != null) {
+            val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+
+            // Configurar la cámara para centrarse en la ubicación actual
+            val cameraPosition = CameraPosition.Builder()
+                .target(currentLatLng) // Posiciona la cámara en la ubicación actual
+                .tilt(60f) // Inclinación para una vista en 3D
+                .bearing(0f) // Orientación de la cámara; puede ajustarse si es necesario
+                .zoom(15f) // Nivel de zoom para acercarse más
+                .build()
+
+            // Mover la cámara para centrarse en la ubicación actual
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        } else {
+            Log.d("MapScreen3", "Ubicación actual no disponible.")
+        }
+    }
+
+    private fun updateCameraPosition() {
+        val currentLocation = LocationProvider.getCurrentLocation()
+
+        if (currentLocation != null) {
+            val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+
+            // Configurar la cámara para centrarse en la ubicación actual
+            val cameraPosition = CameraPosition.Builder()
+                .target(currentLatLng) // Posiciona la cámara en la ubicación actual
+                .tilt(80f) // Inclinación para una vista en 3D
+                .bearing(0f) // Orientación de la cámara; puede ajustarse si es necesario
+                .zoom(21f) // Nivel de zoom para acercarse más
+                .build()
+
+            // Mover la cámara para centrarse en la ubicación actual
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+        } else {
+            Log.d("MapScreen3", "Ubicación actual no disponible.")
+        }
     }
 
     private fun decodePolyline(encoded: String): List<LatLng> {
@@ -159,3 +242,4 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         return poly
     }
 }
+
