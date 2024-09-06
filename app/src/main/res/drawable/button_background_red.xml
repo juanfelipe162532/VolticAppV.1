@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape>
-            <solid android:color="#FFFFFF"/>
+            <solid android:color="?attr/splashBetaLogoColor2"/>
             <corners android:radius="21dp"/>
         </shape>
     </item>
     <item>
         <shape>
-            <solid android:color="#FF0000"/>
+            <solid android:color="?attr/splashLogoColor1"/>
             <corners android:radius="21dp"/>
         </shape>
     </item>

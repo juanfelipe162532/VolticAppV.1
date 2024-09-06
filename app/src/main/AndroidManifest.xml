@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VolticAppV1.Night"
+        android:theme="@style/Theme.VolticAppV1.Day"
         tools:targetApi="31">
 
         <meta-data
@@ -118,7 +118,7 @@
             android:name=".LoadingScreen"
             android:screenOrientation="portrait"
             android:exported="true"
-            android:theme="@style/Theme.VolticAppV1.Night">
+            android:theme="@style/Theme.VolticAppV1.Day">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

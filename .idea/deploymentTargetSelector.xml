@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Voltic App V.1">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-06T02:34:39.061569300Z">
+        <DropdownSelection timestamp="2024-09-06T03:16:34.763503Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=ZHSCXCQ8WGYHTS8L" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\USUARIO\.android\avd\Pixel_3_API_30.avd" />
             </handle>
           </Target>
         </DropdownSelection>

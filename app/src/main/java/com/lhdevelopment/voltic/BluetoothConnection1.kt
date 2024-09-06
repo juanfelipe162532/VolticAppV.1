@@ -16,6 +16,7 @@ import androidx.activity.ComponentActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.airbnb.lottie.LottieAnimationView
+import java.util.Calendar
 
 @Suppress("DEPRECATION")
 class BluetoothConnection1 : ComponentActivity() {
@@ -31,6 +32,22 @@ class BluetoothConnection1 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+
+        setContentView(R.layout.bluetoothconnection1)
+
+
         // Verificar si es la primera vez que el usuario ingresa
         val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
         val isFirstRun = sharedPreferences.getBoolean("isFirstRun", false)
@@ -39,8 +56,6 @@ class BluetoothConnection1 : ComponentActivity() {
             navigateToBluetoothConnection2()
             return
         }
-
-        setContentView(R.layout.bluetoothconnection1)
 
         val lottieAnimationView: LottieAnimationView = findViewById(R.id.lottieAnimationView)
         lottieAnimationView.setAnimation(R.raw.bluetoothanim1)

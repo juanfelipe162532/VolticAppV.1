@@ -26,6 +26,7 @@ import android.location.LocationManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import java.util.*
+import java.util.Calendar
 
 @Suppress("DEPRECATION")
 class MainPanel : ComponentActivity() {
@@ -54,6 +55,21 @@ class MainPanel : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+
         setContentView(R.layout.mainpanel)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)

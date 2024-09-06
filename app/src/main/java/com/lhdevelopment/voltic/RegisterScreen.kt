@@ -25,6 +25,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Calendar
 import java.util.regex.Pattern
 
 private const val TAG = "RegisterScreen"
@@ -59,7 +60,32 @@ class RegisterScreen : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+
+        // Establecer el contenido
         setContentView(R.layout.registerscreen)
+
+
+
+
+
+
+
+
+
 
         val emailEditText: EditText = findViewById(R.id.emailEditText)
         val usernameEditText: EditText = findViewById(R.id.usernameEditText)

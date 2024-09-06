@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
    <style name="Theme.VolticAppV1.Night" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-   <!-- Definición de colores y estilos para el modo claro -->
-      <item name="splashBackground">@color/splashBackgroundNight</item>
+   <!-- Definición de colores y estilos para el modo oscuro -->
+      <item name="android:statusBarColor">@color/splashBackgroundNight</item>
+      <item name="splashBackground">@drawable/loadingsreenbackground_night</item>
       <item name="splashLogoColor1">@color/splashLogoColor1Night</item>
       <item name="splashLogoColor2">@color/splashLogoColor2Night</item>
       <item name="splashLogoColor3">@color/splashLogoColor3Night</item>
       <item name="splashBetaLogoColor1">@color/splashBetaLogoColor1Night</item>
       <item name="splashBetaLogoColor2">@color/splashBetaLogoColor2Night</item>
       <item name="splashTextColor">@color/splashTextColorNight</item>
+      <item name="gradient_background">@drawable/gradient_overlay_2_night</item>
    </style>
 
    <style name="Theme.VolticAppV1.Day" parent="Theme.MaterialComponents.DayNight.NoActionBar">
       <!-- Definición de colores y estilos para el modo claro -->
-      <item name="splashBackground">@color/splashBackgroundDay</item>
+      <item name="android:statusBarColor">@color/splashBackgroundDay</item>
+      <item name="splashBackground">@drawable/loadingsreenbackground_day</item>
       <item name="splashLogoColor1">@color/splashLogoColor1Day</item>
       <item name="splashLogoColor2">@color/splashLogoColor2Day</item>
       <item name="splashLogoColor3">@color/splashLogoColor3Day</item>
       <item name="splashBetaLogoColor1">@color/splashBetaLogoColor1Day</item>
       <item name="splashBetaLogoColor2">@color/splashBetaLogoColor2Day</item>
       <item name="splashTextColor">@color/splashTextColorDay</item>
+      <item name="gradient_background">@drawable/gradient_overlay_2_day</item>
    </style>
 </resources>

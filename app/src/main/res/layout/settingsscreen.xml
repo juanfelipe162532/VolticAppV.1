@@ -6,7 +6,7 @@
         android:id="@+id/gradientOverlay"
         android:layout_width="match_parent"
         android:layout_height="1000dp"
-        android:background="@drawable/gradient_overlay_2"
+        android:background="@drawable/gradient_overlay_2_day"
         android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

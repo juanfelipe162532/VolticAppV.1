@@ -25,6 +25,7 @@ import com.airbnb.lottie.LottieAnimationView
 import android.widget.Button
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.IOException
+import java.util.Calendar
 import java.util.UUID
 import kotlin.random.Random
 import android.content.res.Resources
@@ -72,6 +73,20 @@ class BluetoothConnection2 : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+
         setContentView(R.layout.bluetoothconnection2)
 
         Log.d("BluetoothConnection2", "onCreate")

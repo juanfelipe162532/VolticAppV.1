@@ -23,7 +23,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import org.json.JSONObject
-import org.mindrot.jbcrypt.BCrypt
+import java.util.Calendar
 
 private const val TAG = "LoginScreen"
 
@@ -35,6 +35,20 @@ class LoginScreen : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+
         setContentView(R.layout.loginscreen)
 
         val usernameEditText: EditText = findViewById(R.id.usernameEditText)
