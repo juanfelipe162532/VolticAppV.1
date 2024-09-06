@@ -9,9 +9,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.content.res.Resources
 import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -21,11 +23,13 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MapStyleOptions
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Calendar
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "ControlFlowWithEmptyBody")
 class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
@@ -41,8 +45,14 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
+    private lateinit var routePolyline: Polyline
+    private val routePoints = mutableListOf<LatLng>()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        configureActivityTheme()
         setContentView(R.layout.mapscreen3)
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -69,13 +79,51 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun configureActivityTheme() {
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+    }
+
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        applyMapStyleBasedOnTheme()
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
         showRoute(this)
+    }
+
+    private fun applyMapStyleBasedOnTheme() {
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val styleResId = if (currentHour >= 18 || currentHour < 6) {
+            R.raw.map_night_style // Modo noche
+        } else {
+            null // Modo día (predeterminado)
+        }
+
+        try {
+            val success = if (styleResId != null) {
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, styleResId))
+            } else {
+                mMap.setMapStyle(null)
+            }
+            if (!success) {
+                // Manejo de error si el estilo no se pudo aplicar
+            }
+        } catch (e: Resources.NotFoundException) {
+            // Manejo de excepción si el archivo no se encuentra
+        }
     }
 
     private fun showRoute(context: Context) {
@@ -91,6 +139,12 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
             addStartMarker(startLocation)
             mMap.addMarker(MarkerOptions().position(endLocation).title("Punto de Fin"))
+
+            // Reiniciar la polilínea y la lista de puntos
+            if (::routePolyline.isInitialized) {
+                routePolyline.remove()
+            }
+            routePoints.clear()
 
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://maps.googleapis.com/maps/api/")
@@ -114,14 +168,11 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                             response.body()?.routes?.firstOrNull()?.overviewPolyline?.points
                         if (polyline != null) {
                             val decodedPath = decodePolyline(polyline)
-                            mMap.addPolyline(
-                                PolylineOptions()
-                                    .addAll(decodedPath)
-                                    .width(30f)
-                                    .color(Color.RED)
-                            )
 
-                            // Centrar el mapa para mostrar ambos puntos
+                            // Agregar los nuevos puntos a la ruta
+                            addNewPoints(decodedPath)
+
+                            // Centra el mapa para mostrar ambos puntos
                             centerMapOnRoute(startLocation, endLocation)
                             loadingScreen.visibility = View.GONE
                         }
@@ -131,16 +182,34 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                 }
 
                 override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
-                    Log.d(
-                        "RouteDisplay",
-                        "Fallo en la solicitud de la Directions API: ${t.message}"
-                    )
+                    Log.d("RouteDisplay", "Fallo en la solicitud de la Directions API: ${t.message}")
                 }
             })
         } else {
             Log.d("RouteDisplay", "No se encontraron coordenadas guardadas para la ruta.")
         }
     }
+
+    private fun addNewPoints(newPoints: List<LatLng>) {
+        // Elimina la polilínea existente si está inicializada
+        if (::routePolyline.isInitialized) {
+            routePolyline.remove()
+        }
+
+        // Agrega los nuevos puntos a la lista de puntos de ruta
+        routePoints.clear() // Limpia la lista de puntos anteriores
+        routePoints.addAll(newPoints)
+
+        // Dibuja la nueva polilínea con los puntos actualizados
+        routePolyline = mMap.addPolyline(
+            PolylineOptions()
+                .addAll(routePoints)
+                .width(30f)
+                .color(Color.BLUE)
+        )
+    }
+
+
 
     private fun addStartMarker(location: LatLng) {
         startMarker = mMap.addMarker(MarkerOptions().position(location).title("Punto de Inicio"))

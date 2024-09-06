@@ -144,7 +144,7 @@
     <include
         layout="@layout/route_creation_loading_screen"
         android:id="@+id/route_creation_loading_screen"
-        android:visibility="visible"/>
+        android:visibility="invisible"/>
 
     <Button
         android:id="@+id/startRouteButton"
@@ -157,7 +157,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="@drawable/button_background_white"
-        android:textColor="#FF0000" />
+        android:textColor="?attr/splashBetaLogoColor2" />
 
     <Button
         android:id="@+id/backButton"

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.AutoCompleteTextView
+import android.content.res.Resources
 import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import com.google.android.libraries.places.api.Places
@@ -21,7 +22,9 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.location.LocationServices
+import java.util.Calendar
 
 class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
 
@@ -32,6 +35,8 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        configureActivityTheme()
         setContentView(R.layout.mapscreen1)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -97,10 +102,26 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
     }
 
+    private fun configureActivityTheme() {
+        // Determinar la hora actual
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+
+        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
+        val themeResId = if (currentHour >= 18 || currentHour < 6) {
+            R.style.Theme_VolticAppV1_Night
+        } else {
+            R.style.Theme_VolticAppV1_Day
+        }
+
+        // Aplicar el tema
+        setTheme(themeResId)
+    }
+
     @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        applyMapStyleBasedOnTheme()
         // Habilitar la ubicación actual y el botón de ubicación
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
@@ -129,6 +150,28 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
 
             saveCoordinatesToSharedPreferences(latLng.latitude, latLng.longitude)
+        }
+    }
+
+    private fun applyMapStyleBasedOnTheme() {
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+        val styleResId = if (currentHour >= 18 || currentHour < 6) {
+            R.raw.map_night_style // Modo noche
+        } else {
+            null // Modo día (predeterminado)
+        }
+
+        try {
+            val success = if (styleResId != null) {
+                mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, styleResId))
+            } else {
+                mMap.setMapStyle(null)
+            }
+            if (!success) {
+                // Manejo de error si el estilo no se pudo aplicar
+            }
+        } catch (e: Resources.NotFoundException) {
+            // Manejo de excepción si el archivo no se encuentra
         }
     }
 
