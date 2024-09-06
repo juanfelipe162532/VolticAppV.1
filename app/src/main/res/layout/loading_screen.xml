@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/loading_screen.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-    android:background="@drawable/whitebackground">
-tools:context=".LoadingScreen">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/splashBackground">
 
     <ImageView
         android:id="@+id/launcherlogo"
@@ -28,7 +24,8 @@ tools:context=".LoadingScreen">
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="12dp"
         android:layout_marginTop="700dp"
-        android:textColor="@color/black"
+        android:textColor="?attr/splashTextColor"
         android:text="Voltic App® Todos los derechos reservados" />
 </RelativeLayout>

@@ -12,7 +12,7 @@
         android:fillColor="@android:color/transparent"/>
     <path
         android:pathData="M89.33,152.62c-0.38,-1.39 -0.74,-2.72 -1.09,-4.02l-8.56,-28.89 -10.06,-32.33q-4.91,-15.38 -6.67,-21.26c-0.09,-0.31 -0.18,-0.64 -0.28,-0.98a16.52,16.52 0,0 0,-16.05 -12.09q-4.3,0.04 -7.15,0.04L39.26,53.1a16.49,16.49 0,0 0,-15.56 22.01l10.9,30.65 23.9,68.82 0.04,0.12a16.5,16.5 0,0 0,15.93 11.7q8.41,-0.07 12.43,-0.08 4.42,0 12.54,0.08"
-        android:fillColor="#cd1717"/>
+        android:fillColor="?attr/splashLogoColor1"/>
     <path
         android:pathData="M88.86,152.62c0.38,-1.39 0.74,-2.72 1.09,-4.02l8.56,-28.89 10.06,-32.33q4.91,-15.38 6.67,-21.26 0.13,-0.47 0.27,-0.98a16.52,16.52 0,0 1,16.05 -12.09q4.3,0.04 7.15,0.04h0.21a16.49,16.49 0,0 1,15.56 22.01l-10.9,30.65 -23.9,68.82 -0.04,0.12a16.5,16.5 0,0 1,-15.93 11.7q-8.41,-0.07 -12.43,-0.08 -4.42,0 -12.54,0.08">
       <aapt:attr name="android:fillColor">
@@ -22,13 +22,13 @@
             android:endX="117.24"
             android:endY="53.02"
             android:type="linear">
-          <item android:offset="0" android:color="#FF690606"/>
-          <item android:offset="0.57" android:color="#FFCD1717"/>
+          <item android:offset="0" android:color="?attr/splashLogoColor2"/>
+          <item android:offset="0.57" android:color="?attr/splashLogoColor3"/>
         </gradient>
       </aapt:attr>
     </path>
     <path
         android:pathData="M117.08,79.97l-29.13,-0.03 -6.01,-7.15c-3.19,-5.15 -6.98,-15.16 -6.85,-22.19q28.75,0.2 67.02,0.2l18.33,-0.1h17.62l17.76,-0.14 -2.53,10.11c-1.72,7.25 -2.43,10.11 -3.23,12.65 -1.03,3.26 -6.79,6.78 -11.89,6.78 -14.6,-0.13 -7.92,-0.13 -17.3,-0.13h-0.41"
-        android:fillColor="#cd1717"/>
+        android:fillColor="?attr/splashLogoColor1"/>
   </group>
 </vector>

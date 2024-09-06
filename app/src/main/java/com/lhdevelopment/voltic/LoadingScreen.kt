@@ -5,17 +5,29 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatDelegate
+import android.util.Log
 
 class LoadingScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.loading_screen)
 
-        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
-        val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
-        val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+        // Forzar el modo oscuro para pruebas
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
 
+        // Obtener el nombre del tema actual
+        val themeName = resources.getResourceEntryName(R.style.Theme_VolticAppV1_Night)
+        Log.d("CurrentTheme", "Tema actual: $themeName")
+
+        // Espera 2 segundos para mostrar la pantalla de carga
         Handler(Looper.getMainLooper()).postDelayed({
+            // Accede a las preferencias compartidas
+            val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+            val isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false)
+            val isFirstRun = sharedPreferences.getBoolean("isFirstRun", true)
+
+            // Navega a la pantalla correspondiente
             val intent = when {
                 isFirstRun -> {
                     // Si es la primera vez que se ejecuta la app, muestra la pantalla de bienvenida.
@@ -36,5 +48,3 @@ class LoadingScreen : ComponentActivity() {
         }, 2000) // Retraso de 2 segundos para mostrar la pantalla de carga.
     }
 }
-
-

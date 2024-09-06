@@ -8,6 +8,7 @@ import android.os.Handler
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Button
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -40,13 +41,14 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mapscreen3)
 
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         loadingScreen = findViewById(R.id.route_creation_loading_screen)
         loadingScreen.visibility = View.VISIBLE
+
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         val backButton: Button = findViewById(R.id.backButton)
         val startRouteButton: Button = findViewById(R.id.startRouteButton)

@@ -394,16 +394,3 @@ class MainPanel : ComponentActivity() {
         locationManager.removeUpdates { } // Detener actualizaciones de GPS
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

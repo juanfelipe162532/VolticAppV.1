@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="Voltic App V.1">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-08-29T14:38:19.598356500Z">
+        <DropdownSelection timestamp="2024-09-06T02:34:39.061569300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=ZHSCXCQ8WGYHTS8L" />

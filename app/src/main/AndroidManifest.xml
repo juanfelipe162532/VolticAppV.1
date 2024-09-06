@@ -11,9 +11,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
-
-
     <application
+        android:name=".VolticApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -21,7 +20,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VolticAppV1"
+        android:theme="@style/Theme.VolticAppV1.Night"
         tools:targetApi="31">
 
         <meta-data
@@ -32,100 +31,102 @@
             android:name=".BatteryScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".MapScreen3"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".MapScreen2"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".MapScreen1"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".SettingsScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".ServicesScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".HistoryScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".StadisticsScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".MainPanel"
             android:keepScreenOn="true"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".BluetoothConnection2"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".BluetoothConnection1"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".LoginScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".RegisterScreen"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".WelcomeScreen4"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".WelcomeScreen3"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".WelcomeScreen2"
             android:screenOrientation="portrait"
             android:exported="false"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".WelcomeScreen1"
             android:screenOrientation="portrait"
             android:exported="false"
             android:label="@string/title_activity_welcome1"
-            android:theme="@style/Theme.VolticAppV1" />
+            android:theme="@style/Theme.VolticAppV1.Day" />
         <activity
             android:name=".LoadingScreen"
             android:screenOrientation="portrait"
             android:exported="true"
-            android:theme="@style/Theme.VolticAppV1">
+            android:theme="@style/Theme.VolticAppV1.Night">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
     </application>
 
 </manifest>
