@@ -11,6 +11,7 @@
       <item name="splashBetaLogoColor2">@color/splashBetaLogoColor2Day</item>
       <item name="splashTextColor">@color/splashTextColorDay</item>
       <item name="gradient_background">@drawable/gradient_overlay_2_day</item>
+      <item name="main_panel_rectangle">@color/mainPanelRectangleDay</item>
    </style>
 
 <style name="Theme.VolticAppV1.Night" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -24,5 +25,6 @@
    <item name="splashBetaLogoColor2">@color/splashBetaLogoColor2Night</item>
    <item name="splashTextColor">@color/splashTextColorNight</item>
    <item name="gradient_background">@drawable/gradient_overlay_2_night</item>
+   <item name="main_panel_rectangle">@color/mainPanelRectangleNight</item>
    </style>
 </resources>

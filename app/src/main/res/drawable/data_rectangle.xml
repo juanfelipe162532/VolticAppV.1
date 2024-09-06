@@ -11,7 +11,7 @@
     <!-- Forma principal -->
     <item android:bottom="3dp">
         <shape android:shape="rectangle">
-            <solid android:color="#FF0000"/> <!-- Color rojo -->
+            <solid android:color="?attr/main_panel_rectangle"/> <!-- Color rojo -->
             <corners android:radius="25dp"/> <!-- Radio de las esquinas redondeadas -->
         </shape>
     </item>

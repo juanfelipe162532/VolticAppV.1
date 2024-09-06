@@ -7,6 +7,7 @@
     <color name="splashBetaLogoColor1Day">#FF0400</color>
     <color name="splashBetaLogoColor2Day">#FFFFFF</color>
     <color name="splashTextColorDay">#000000</color>
+    <color name="mainPanelRectangleDay">#FF0000</color>
     <color name="splashBackgroundNight">#1A1A1A</color>
     <color name="splashLogoColor1Night">#FFFFFF</color>
     <color name="splashLogoColor2Night">#212121</color>
@@ -14,4 +15,5 @@
     <color name="splashBetaLogoColor1Night">#FFFFFF</color>
     <color name="splashBetaLogoColor2Night">#1A1A1A</color>
     <color name="splashTextColorNight">#FFFFFF</color>
+    <color name="mainPanelRectangleNight">#2C2C2C</color>
 </resources>

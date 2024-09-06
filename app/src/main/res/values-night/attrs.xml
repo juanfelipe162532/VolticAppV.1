@@ -8,4 +8,5 @@
     <attr name="splashBetaLogoColor2" format="color"/>
     <attr name="splashTextColor" format="color"/>
     <attr name="gradient_background" format="reference"/>
+    <attr name="main_panel_rectangle" format="color"/>
 </resources>
