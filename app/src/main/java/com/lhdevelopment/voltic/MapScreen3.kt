@@ -1,5 +1,10 @@
 package com.lhdevelopment.voltic
 
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import android.os.Looper
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -36,6 +41,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
     private val apiKey = "AIzaSyDLEaBvnGVCfUSa0dE_AoKPpjp57mWPNkg" // Reemplaza con tu clave de API
     private lateinit var loadingScreen: View
     private var startMarker: Marker? = null
+    private var hasCenteredCamera = false
     private val handler = Handler()
     private val updateInterval: Long = 100
     private val runnable = object : Runnable {
@@ -102,6 +108,8 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
         showRoute(this)
+        loadingScreen.visibility = View.GONE
+        startLocationUpdates()
     }
 
     private fun applyMapStyleBasedOnTheme() {
@@ -137,15 +145,27 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
             val startLocation = LatLng(startLatitude, startLongitude)
             val endLocation = LatLng(endLatitude, endLongitude)
 
+            // Añade marcador de inicio y fin
             addStartMarker(startLocation)
             mMap.addMarker(MarkerOptions().position(endLocation).title("Punto de Fin"))
 
-            // Reiniciar la polilínea y la lista de puntos
-            if (::routePolyline.isInitialized) {
-                routePolyline.remove()
-            }
-            routePoints.clear()
+            // Muestra la ruta inicial
+            updateRoute(startLocation)
+        } else {
+            Log.d("RouteDisplay", "No se encontraron coordenadas guardadas para la ruta.")
+        }
+    }
 
+    // Actualización de la ruta en tiempo real, llamado desde el LocationCallback
+    private fun updateRoute(currentLocation: LatLng) {
+        val sharedPreferences = getSharedPreferences("MapPreferences", Context.MODE_PRIVATE)
+        val endLatitude = sharedPreferences.getString("END_LATITUDE", null)?.toDouble()
+        val endLongitude = sharedPreferences.getString("END_LONGITUDE", null)?.toDouble()
+
+        if (endLatitude != null && endLongitude != null) {
+            val endLocation = LatLng(endLatitude, endLongitude)
+
+            // Llama a la API de direcciones para recalcular la ruta
             val retrofit = Retrofit.Builder()
                 .baseUrl("https://maps.googleapis.com/maps/api/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -153,7 +173,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
             val service = retrofit.create(DirectionsService::class.java)
             val call = service.getDirections(
-                "${startLatitude},${startLongitude}",
+                "${currentLocation.latitude},${currentLocation.longitude}",
                 "${endLatitude},${endLongitude}",
                 apiKey
             )
@@ -164,32 +184,30 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                     response: retrofit2.Response<DirectionsResponse>
                 ) {
                     if (response.isSuccessful) {
-                        val polyline =
-                            response.body()?.routes?.firstOrNull()?.overviewPolyline?.points
+                        val polyline = response.body()?.routes?.firstOrNull()?.overviewPolyline?.points
                         if (polyline != null) {
                             val decodedPath = decodePolyline(polyline)
-
-                            // Agregar los nuevos puntos a la ruta
                             addNewPoints(decodedPath)
 
-                            // Centra el mapa para mostrar ambos puntos
-                            centerMapOnRoute(startLocation, endLocation)
-                            loadingScreen.visibility = View.GONE
+                            if (!hasCenteredCamera) {
+                                centerMapOnRoute(currentLocation, endLocation)
+                            }
                         }
                     } else {
-                        Log.d("RouteDisplay", "Error en la respuesta de la Directions API.")
+                        Log.d("RouteUpdate", "Error en la respuesta de la Directions API.")
                     }
                 }
 
                 override fun onFailure(call: Call<DirectionsResponse>, t: Throwable) {
-                    Log.d("RouteDisplay", "Fallo en la solicitud de la Directions API: ${t.message}")
+                    Log.d("RouteUpdate", "Fallo en la solicitud de la Directions API: ${t.message}")
                 }
             })
         } else {
-            Log.d("RouteDisplay", "No se encontraron coordenadas guardadas para la ruta.")
+            Log.d("RouteUpdate", "No se encontraron coordenadas de destino.")
         }
     }
 
+    // Agregar nuevos puntos a la ruta y redibujar la polilínea
     private fun addNewPoints(newPoints: List<LatLng>) {
         // Elimina la polilínea existente si está inicializada
         if (::routePolyline.isInitialized) {
@@ -207,6 +225,31 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                 .width(30f)
                 .color(Color.BLUE)
         )
+    }
+
+    // Inicia las actualizaciones de ubicación en tiempo real
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        val locationRequest = LocationRequest.create().apply {
+            interval = 5000 // Actualiza cada 5 segundos
+            fastestInterval = 2000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                val location = locationResult.lastLocation
+                if (location != null) {
+                    // Actualiza la ruta con la nueva ubicación
+                    val currentLatLng = LatLng(location.latitude, location.longitude)
+                    updateRoute(currentLatLng)
+                }
+            }
+        }
+
+        // Solicitar actualizaciones de ubicación
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     }
 
 
@@ -235,6 +278,8 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
         // Mover la cámara para ajustar el mapa a los dos puntos
         mMap.moveCamera(cameraUpdate)
+
+        hasCenteredCamera = true
     }
 
     private fun start3DRouteView() {
