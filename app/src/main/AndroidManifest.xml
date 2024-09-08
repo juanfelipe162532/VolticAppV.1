@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
 
+
+
     <application
         android:name=".VolticApp"
         android:allowBackup="true"
@@ -22,6 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VolticAppV1.Day"
         tools:targetApi="31">
+
+        <service android:name=".SpeedTrackingService" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

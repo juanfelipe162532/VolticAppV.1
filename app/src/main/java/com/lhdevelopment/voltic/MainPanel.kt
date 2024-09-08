@@ -2,13 +2,11 @@ package com.lhdevelopment.voltic
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import android.widget.Button
 import android.view.ViewTreeObserver
@@ -18,70 +16,65 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
-import java.text.SimpleDateFormat
 import android.view.WindowManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import java.util.*
 import java.util.Calendar
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 @Suppress("DEPRECATION")
 class MainPanel : ComponentActivity() {
 
-    private var speedChangeTime: Long = 0
-    private var zeroSpeedStartTime: Long = 0
-    private var isSpeedNonZero: Boolean = false
-    private var isSpeedZeroMoreThanFiveMinutes: Boolean = false
-    private val timeDataNumbers: TextView by lazy { findViewById(R.id.timedataNumbers) }
-
+    private val viewModel: MainPanelViewModel by viewModels()
+    private var isCalculating = false
+    private lateinit var calculationThread: Thread
+    private var startTime: Long = 0
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
-    private var isTrackingSpeed = false
-
+    private lateinit var locationRequest: LocationRequest
     private lateinit var timeTextView: TextView
-    private val handler = Handler()
-    private val updateTimeRunnable = object : Runnable {
-        override fun run() {
-            updateTime()
-            handler.postDelayed(this, 1000) // Actualiza cada segundo
-        }
-    }
-
-    private var totalDistance: Float = 0f
     private var lastLocation: Location? = null
 
+    @SuppressLint("DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         // Determinar la hora actual
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-
         // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
         val themeResId = if (currentHour >= 18 || currentHour < 6) {
             R.style.Theme_VolticAppV1_Night
         } else {
             R.style.Theme_VolticAppV1_Day
         }
-
         // Aplicar el tema
         setTheme(themeResId)
-
         setContentView(R.layout.mainpanel)
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
+
+        locationRequest = LocationRequest.create().apply {
+            interval = 200
+            fastestInterval = 100
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         timeTextView = findViewById(R.id.timeTextView)
 
+        startLocationUpdates()
+
         val exitIcon = findViewById<ImageView>(R.id.exitIcon)
         val halfMoonImageView = findViewById<ClippingImageView>(R.id.speedMeterShape)
-        val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
         val speedMeterNumbers2 = findViewById<ImageView>(R.id.speedMeter_numbers)
         val speedMeterMetric = findViewById<TextView>(R.id.speedMeterMetric)
         val connectionStatusValidation = findViewById<RelativeLayout>(R.id.connectionStatusValidation)
@@ -104,10 +97,11 @@ class MainPanel : ComponentActivity() {
         val batteryDataText = findViewById<TextView>(R.id.batterydataText)
         val batteryDataNumbers = findViewById<TextView>(R.id.batterydataNumbers)
         val distanceDataText = findViewById<TextView>(R.id.distancedataText)
-        val distanceDataNumbers = findViewById<TextView>(R.id.distancedataNumbers)
         val distanceDataKm = findViewById<TextView>(R.id.distancedatakm)
         val timeDataText = findViewById<TextView>(R.id.timedataText)
+        val distanceDataNumbers = findViewById<TextView>(R.id.distancedataNumbers)
         val timeDataNumbers = findViewById<TextView>(R.id.timedataNumbers)
+        val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
 
         exitIcon.setOnClickListener {
             finishAffinity()
@@ -142,6 +136,15 @@ class MainPanel : ComponentActivity() {
             val intent = Intent(this, BatteryScreen::class.java)
             startActivity(intent)
         }
+
+        viewModel.distance.observe(this, Observer { distance ->
+            distanceDataNumbers.text = String.format("%.1f", distance)
+        })
+
+        viewModel.speed.observe(this, Observer { speed ->
+            speedMeterNumbers.text = String.format("%.1f", speed)
+        })
+
 
         // Obtener si la conexión Bluetooth fue exitosa desde el Intent
         val isBluetoothConnected = intent.getBooleanExtra("EXTRA_BT_CONNECTED", false)
@@ -275,42 +278,6 @@ class MainPanel : ComponentActivity() {
                                     startSpeedTracking()
                                 }
                             }, 1500)
-
-                            // Animación de cambio de números
-                            val numberAnimator = ValueAnimator.ofFloat(0f, 10f).apply {
-                                duration = 1500 // Duración de la animación
-                                interpolator = AccelerateDecelerateInterpolator() // Interpolador para animación suave
-
-                                addUpdateListener { animation ->
-                                    val value = animation.animatedValue as Float
-                                    speedMeterNumbers.text = String.format("%.1f", value)
-                                }
-                            }
-
-                            // Animación inversa
-                            val reverseNumberAnimator = ValueAnimator.ofFloat(10f, 0f).apply {
-                                duration = 1500 // Duración de la animación
-                                interpolator = AccelerateDecelerateInterpolator() // Interpolador para animación suave
-
-                                addUpdateListener { animation ->
-                                    val value = animation.animatedValue as Float
-                                    speedMeterNumbers.text = String.format("%.1f", value)
-                                }
-                            }
-
-                            // Ejecutar animaciones de números secuencialmente
-                            numberAnimator.start()
-                            numberAnimator.addListener(object : android.animation.Animator.AnimatorListener {
-                                override fun onAnimationStart(animation: android.animation.Animator) {}
-
-                                override fun onAnimationEnd(animation: android.animation.Animator) {
-                                    reverseNumberAnimator.start()
-                                }
-
-                                override fun onAnimationCancel(animation: android.animation.Animator) {}
-
-                                override fun onAnimationRepeat(animation: android.animation.Animator) {}
-                            })
                         }
 
                         override fun onAnimationCancel(animation: android.animation.Animator) {}
@@ -320,93 +287,75 @@ class MainPanel : ComponentActivity() {
                 }
             }
         )
-
-        // Iniciar la actualización del tiempo
-        handler.post(updateTimeRunnable)
     }
-    private fun startSpeedTracking() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+    @SuppressLint("MissingPermission")
+    private fun startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Si no se tienen permisos, solicitarlos
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
             return
         }
 
-        isTrackingSpeed = true
-
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L, 0f, object : LocationListener {
-            @SuppressLint("SetTextI18n")
-            override fun onLocationChanged(location: Location) {
-                val speedKmh = location.speed * 3.6 // Convierte m/s a km/h
-                val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
-
-                // Muestra la velocidad
-                speedMeterNumbers.text = String.format("%.1f", speedKmh)
-
-                // Verifica si la velocidad ha cambiado de 0
-                if (speedKmh > 0) {
-                    if (!isSpeedNonZero) {
-                        // Registra el tiempo cuando la velocidad cambia de 0
-                        speedChangeTime = System.currentTimeMillis()
-                        isSpeedNonZero = true
-                        isSpeedZeroMoreThanFiveMinutes = false // Restablece el estado
-                    }
-                } else {
-                    if (isSpeedNonZero) {
-                        // Registra el tiempo cuando la velocidad se vuelve 0
-                        zeroSpeedStartTime = System.currentTimeMillis()
-                        isSpeedNonZero = false
+        // Usar la instancia de locationRequest que has creado
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest, // Usar la variable de instancia
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val newLocation = locationResult.lastLocation
+                    if (newLocation != null) {
+                        updateLocationData(newLocation)
                     }
                 }
+            },
+            null
+        )
+    }
 
-                // Calcula la distancia recorrida si lastLocation no es nulo
-                lastLocation?.let {
-                    val distance = it.distanceTo(location)
-                    totalDistance += distance
-                    val distanceDataNumbers = findViewById<TextView>(R.id.distancedataNumbers)
-                    distanceDataNumbers.text = String.format("%.2f", totalDistance / 1000)
+
+    @SuppressLint("DefaultLocale")
+    private fun updateLocationData(newLocation: Location) {
+        if (lastLocation != null) {
+            // Calcular la distancia y actualizar
+            val distance = lastLocation!!.distanceTo(newLocation)
+            viewModel.updateDistance(distance)
+
+        }
+
+        // Guardar la nueva ubicación
+        lastLocation = newLocation
+        val speed = (newLocation.speed * 3.6).toFloat() // convertir m/s a km/h
+        viewModel.updateSpeed(speed)
+    }
+
+    private fun startCalculationThread() {
+        calculationThread = Thread {
+            while (isCalculating) {
+                val elapsedTime = System.currentTimeMillis() - startTime
+                runOnUiThread {
+                    val timeDataNumbers = findViewById<TextView>(R.id.timedataNumbers)
+                    timeDataNumbers.text = formatTime(elapsedTime)
                 }
-
-                // Actualiza la última ubicación
-                lastLocation = location
-
-                // Calcula el tiempo transcurrido
-                if (isSpeedNonZero && speedChangeTime > 0) {
-                    val elapsedTime = System.currentTimeMillis() - speedChangeTime
-                    val minutes = (elapsedTime / 1000) / 60
-                    val seconds = (elapsedTime / 1000) % 60
-                    timeDataNumbers.text = String.format("%02d:%02d", minutes, seconds)
-                } else if (!isSpeedNonZero) {
-                    // Calcula el tiempo transcurrido desde que la velocidad se volvió 0
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - zeroSpeedStartTime > 5 * 60 * 1000) { // 5 minutos en milisegundos
-                        timeDataNumbers.text = "00:00"
-                        isSpeedZeroMoreThanFiveMinutes = true
-                    } else {
-                        val elapsedTime = currentTime - zeroSpeedStartTime
-                        val minutes = (elapsedTime / 1000) / 60
-                        val seconds = (elapsedTime / 1000) % 60
-                        timeDataNumbers.text = String.format("%02d:%02d", minutes, seconds)
-                    }
-                } else {
-                    timeDataNumbers.text = "00:00" // Muestra 00:00 si no se ha registrado el tiempo de velocidad
-                }
+                Thread.sleep(1000) // Actualizar cada segundo
             }
-
-
-            override fun onProviderEnabled(provider: String) {}
-            override fun onProviderDisabled(provider: String) {}
-            @Deprecated("Deprecated in Java")
-            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-        })
-    }
-    private fun updateTime() {
-        val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        timeTextView.text = currentTime
+        }
+        calculationThread.start()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacks(updateTimeRunnable)
-        locationManager.removeUpdates { } // Detener actualizaciones de GPS
+    @SuppressLint("DefaultLocale")
+    private fun formatTime(milliseconds: Long): String {
+        val seconds = milliseconds / 1000
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return String.format("%02d:%02d", minutes, remainingSeconds)
+    }
+
+    private fun startSpeedTracking() {
+        startTime = System.currentTimeMillis()
+        isCalculating = true
+        startCalculationThread() // Iniciar el thread de tiempo
+        startLocationUpdates() // Iniciar la actualización de ubicación
     }
 }

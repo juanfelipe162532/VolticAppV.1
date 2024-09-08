@@ -33,10 +33,12 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Calendar
+import android.widget.Toast
 
 @Suppress("DEPRECATION", "ControlFlowWithEmptyBody")
 class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
+    private var isRouteStarted = false
     private lateinit var mMap: GoogleMap
     private val apiKey = "AIzaSyDLEaBvnGVCfUSa0dE_AoKPpjp57mWPNkg" // Reemplaza con tu clave de API
     private lateinit var loadingScreen: View
@@ -72,6 +74,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         LocationProvider.init(this)
 
         startRouteButton.setOnClickListener {
+            isRouteStarted = true // Marca que la ruta ha comenzado
             handler.post(runnable)
             start3DRouteView()
         }
@@ -80,8 +83,26 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
 
         backButton.setOnClickListener {
-            val intent = Intent(this, MapScreen2::class.java)
-            startActivity(intent)
+            if (!isRouteStarted) {
+                val intent = Intent(this, MapScreen2::class.java)
+                startActivity(intent)
+            } else {
+                // Bloquea el botón "Atrás" cuando la ruta ha comenzado
+                Toast.makeText(
+                    this,
+                    "No puedes regresar mientras la ruta está en progreso.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
+    override fun onBackPressed() {
+        if (isRouteStarted) {
+        } else {
+            // Si la ruta no ha comenzado, permitir regresar normalmente
+            super.onBackPressed()
         }
     }
 

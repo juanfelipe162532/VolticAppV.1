@@ -85,11 +85,13 @@ class MapScreen1 : FragmentActivity(), OnMapReadyCallback {
             }
         })
 
-        // Configuración del botón para regresar a MainPanel
         backButton.setOnClickListener {
-            val intent = Intent(this, MainPanel::class.java)
+            val intent = Intent(this, MainPanel::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            }
             startActivity(intent)
         }
+
 
         nextButton.setOnClickListener {
             val intent = Intent(this, MapScreen2::class.java)
