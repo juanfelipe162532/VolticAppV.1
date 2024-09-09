@@ -27,10 +27,14 @@ import com.google.android.gms.location.LocationServices
 import java.util.Calendar
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import android.media.MediaPlayer
+
 
 @Suppress("DEPRECATION")
 class MainPanel : ComponentActivity() {
 
+    private var isSoundPlaying = false
+    private var mediaPlayer: MediaPlayer? = null
     private val viewModel: MainPanelViewModel by viewModels()
     private var isCalculating = false
     private lateinit var calculationThread: Thread
@@ -314,6 +318,38 @@ class MainPanel : ComponentActivity() {
         )
     }
 
+    private fun playWarningSound() {
+        if (isSoundPlaying) return // Si el sonido ya está en reproducción, no hacer nada
+
+        try {
+            mediaPlayer = MediaPlayer.create(this, R.raw.warning_sound)
+            mediaPlayer?.apply {
+                setOnCompletionListener {
+                    release() // Liberar recursos cuando termine la reproducción
+                    isSoundPlaying = false // Marcar que el sonido ha terminado de reproducirse
+                }
+                start()
+                isSoundPlaying = true // Marcar que el sonido está en reproducción
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkSpeed(speed: Float) {
+        if (speed > 20) { // Ajusta el umbral según tus necesidades
+            playWarningSound()
+        } else {
+            // Si la velocidad es menor al umbral, detener el sonido si está en reproducción
+            if (isSoundPlaying) {
+                mediaPlayer?.stop()
+                mediaPlayer?.release()
+                mediaPlayer = null
+                isSoundPlaying = false
+            }
+        }
+    }
+
 
     @SuppressLint("DefaultLocale")
     private fun updateLocationData(newLocation: Location) {
@@ -328,6 +364,8 @@ class MainPanel : ComponentActivity() {
         lastLocation = newLocation
         val speed = (newLocation.speed * 3.6).toFloat() // convertir m/s a km/h
         viewModel.updateSpeed(speed)
+
+        checkSpeed(speed)
     }
 
     private fun startCalculationThread() {

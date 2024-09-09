@@ -1,5 +1,6 @@
 package com.lhdevelopment.voltic
 
+import android.Manifest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -8,6 +9,7 @@ import android.os.Looper
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Handler
 import android.os.Bundle
@@ -15,7 +17,10 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.content.res.Resources
+import android.location.Location
+import android.location.LocationManager
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.Polyline
@@ -34,18 +39,34 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Calendar
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 
 @Suppress("DEPRECATION", "ControlFlowWithEmptyBody")
 class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var locationManager: LocationManager
+    private lateinit var locationRequest: LocationRequest
+    private val viewModel: MainPanelViewModel by viewModels()
+    private var isCalculating = false
+    private lateinit var calculationThread: Thread
+    private var startTime: Long = 0
+    private var lastLocation: Location? = null
     private var isRouteStarted = false
     private lateinit var mMap: GoogleMap
     private val apiKey = "AIzaSyDLEaBvnGVCfUSa0dE_AoKPpjp57mWPNkg" // Reemplaza con tu clave de API
     private lateinit var loadingScreen: View
+    private lateinit var backButton: Button
+    private lateinit var pauseButton: Button
+    private lateinit var stopButton: Button
+    private lateinit var startRouteButton : Button
     private var startMarker: Marker? = null
     private var hasCenteredCamera = false
     private val handler = Handler()
-    private val updateInterval: Long = 100
+    private val updateInterval: Long = 90
     private val runnable = object : Runnable {
         override fun run() {
             updateCameraPosition()
@@ -57,19 +78,37 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
     private val routePoints = mutableListOf<LatLng>()
 
 
+    @SuppressLint("DefaultLocale")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         configureActivityTheme()
         setContentView(R.layout.mapscreen3)
 
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        val routeDistanceNumbers = findViewById<TextView>(R.id.routeDistanceNumbers)
+        val routeSpeedNumbers = findViewById<TextView>(R.id.routeSpeedNumbers)
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         loadingScreen = findViewById(R.id.route_creation_loading_screen)
+        backButton = findViewById(R.id.backButton)
+        pauseButton = findViewById(R.id.pauseRouteButton)
+        stopButton = findViewById(R.id.stopRouteButton)
+
+
+        startRouteButton = findViewById(R.id.startRouteButton)
         loadingScreen.visibility = View.VISIBLE
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        val backButton: Button = findViewById(R.id.backButton)
-        val startRouteButton: Button = findViewById(R.id.startRouteButton)
+
+        locationRequest = LocationRequest.create().apply {
+            interval = 200
+            fastestInterval = 100
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+
 
         LocationProvider.init(this)
 
@@ -77,10 +116,14 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
             isRouteStarted = true // Marca que la ruta ha comenzado
             handler.post(runnable)
             start3DRouteView()
+            startLocation()
+            startSpeedTracking()
+            startRouteButton.visibility = View.GONE
+            pauseButton.visibility = View.VISIBLE
+            stopButton.visibility = View.VISIBLE
         }
 
         mapFragment.getMapAsync(this)
-
 
         backButton.setOnClickListener {
             if (!isRouteStarted) {
@@ -95,7 +138,88 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                 ).show()
             }
         }
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        viewModel.distance.observe(this, Observer { distance ->
+            routeDistanceNumbers.text = String.format("%.1f", distance)
+        })
+
+        viewModel.speed.observe(this, Observer { speed ->
+            routeSpeedNumbers.text = String.format("%.1f", speed)
+        })
     }
+
+    @SuppressLint("MissingPermission")
+    private fun startLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Si no se tienen permisos, solicitarlos
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+            return
+        }
+
+        // Usar la instancia de locationRequest que has creado
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest, // Usar la variable de instancia
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val newLocation = locationResult.lastLocation
+                    if (newLocation != null) {
+                        updateLocationData(newLocation)
+                    }
+                }
+            },
+            null
+        )
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun updateLocationData(newLocation: Location) {
+        if (lastLocation != null) {
+            // Calcular la distancia y actualizar
+            val distance = lastLocation!!.distanceTo(newLocation)
+            viewModel.updateDistance(distance)
+
+        }
+
+        // Guardar la nueva ubicación
+        lastLocation = newLocation
+        val speed = (newLocation.speed * 3.6).toFloat() // convertir m/s a km/h
+        viewModel.updateSpeed(speed)
+    }
+
+    private fun startCalculationThread() {
+        calculationThread = Thread {
+            while (isCalculating) {
+                val elapsedTime = System.currentTimeMillis() - startTime
+                runOnUiThread {
+                    val routeTimeNumbers = findViewById<TextView>(R.id.routeTimeNumbers)
+                    routeTimeNumbers.text = formatTime(elapsedTime)
+                }
+                Thread.sleep(1000) // Actualizar cada segundo
+            }
+        }
+        calculationThread.start()
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun formatTime(milliseconds: Long): String {
+        val seconds = milliseconds / 1000
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return String.format("%02d:%02d", minutes, remainingSeconds)
+    }
+
+    private fun startSpeedTracking() {
+        startTime = System.currentTimeMillis()
+        isCalculating = true
+        startCalculationThread() // Iniciar el thread de tiempo
+        startLocation() // Iniciar la actualización de ubicación
+    }
+
+
 
     @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     override fun onBackPressed() {
@@ -130,6 +254,8 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         mMap.uiSettings.isMyLocationButtonEnabled = true
         showRoute(this)
         loadingScreen.visibility = View.GONE
+        backButton.visibility = View.VISIBLE
+        startRouteButton.visibility = View.VISIBLE
         startLocationUpdates()
     }
 
@@ -332,20 +458,24 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         if (currentLocation != null) {
             val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
 
-            // Configurar la cámara para centrarse en la ubicación actual
+            // Obtener el rumbo actual (azimuth) del dispositivo
+            val currentBearing = currentLocation.bearing // O usar un sensor de orientación si es necesario
+
+            // Configurar la cámara para centrarse en la ubicación actual con orientación ajustada
             val cameraPosition = CameraPosition.Builder()
                 .target(currentLatLng) // Posiciona la cámara en la ubicación actual
                 .tilt(80f) // Inclinación para una vista en 3D
-                .bearing(0f) // Orientación de la cámara; puede ajustarse si es necesario
-                .zoom(21f) // Nivel de zoom para acercarse más
+                .bearing(currentBearing) // Establecer el rumbo actual para que la cámara gire con la flecha
+                .zoom(18f) // Nivel de zoom para acercarse más
                 .build()
 
-            // Mover la cámara para centrarse en la ubicación actual
+            // Mover la cámara para centrarse en la ubicación actual y girar con el rumbo
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         } else {
             Log.d("MapScreen3", "Ubicación actual no disponible.")
         }
     }
+
 
     private fun decodePolyline(encoded: String): List<LatLng> {
         val poly = mutableListOf<LatLng>()
