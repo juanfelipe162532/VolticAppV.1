@@ -44,9 +44,10 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 
-@Suppress("DEPRECATION", "ControlFlowWithEmptyBody")
+@Suppress("DEPRECATION", "ControlFlowWithEmptyBody", "RedundantSamConstructor")
 class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
+    private var isPaused = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationManager: LocationManager
     private lateinit var locationRequest: LocationRequest
@@ -62,6 +63,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
     private lateinit var backButton: Button
     private lateinit var pauseButton: Button
     private lateinit var stopButton: Button
+    private lateinit var resumeButton: Button
     private lateinit var startRouteButton : Button
     private var startMarker: Marker? = null
     private var hasCenteredCamera = false
@@ -96,6 +98,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         backButton = findViewById(R.id.backButton)
         pauseButton = findViewById(R.id.pauseRouteButton)
         stopButton = findViewById(R.id.stopRouteButton)
+        resumeButton = findViewById(R.id.resumeRouteButton)
 
 
         startRouteButton = findViewById(R.id.startRouteButton)
@@ -109,7 +112,6 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
 
 
-
         LocationProvider.init(this)
 
         startRouteButton.setOnClickListener {
@@ -121,6 +123,16 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
             startRouteButton.visibility = View.GONE
             pauseButton.visibility = View.VISIBLE
             stopButton.visibility = View.VISIBLE
+        }
+
+        pauseButton.setOnClickListener {
+            togglePauseState() // Llamada a la función de pausar/reanudar
+            pauseButton.visibility = View.GONE
+            resumeButton.visibility = View.VISIBLE
+        }
+
+        resumeButton.setOnClickListener {
+            resumeTracking()
         }
 
         mapFragment.getMapAsync(this)
@@ -137,6 +149,11 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+        }
+
+
+        stopButton.setOnClickListener {
+            endTracking()
         }
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -211,6 +228,56 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         val remainingSeconds = seconds % 60
         return String.format("%02d:%02d", minutes, remainingSeconds)
     }
+
+    // Función para pausar o reanudar el seguimiento de la velocidad, tiempo y distancia
+    private fun togglePauseState() {
+        if (isPaused) {
+            // Reanudar el cálculo de velocidad, tiempo y distancia
+            startSpeedTracking() // Reinicia el tracking
+            Toast.makeText(this, "Ruta reanudada", Toast.LENGTH_SHORT).show()
+        } else {
+            // Pausar el cálculo de velocidad, tiempo y distancia
+            isCalculating = false // Detener cálculo del tiempo
+            Toast.makeText(this, "Ruta pausada", Toast.LENGTH_SHORT).show()
+        }
+        isPaused = !isPaused // Cambiar estado de pausa
+    }
+
+    // Función para reanudar velocidad, tiempo y distancia
+    private fun resumeTracking() {
+        if (isPaused) {
+            isPaused = false
+            startCalculationThread() // Reinicia el cálculo del tiempo
+            startLocation() // Vuelve a iniciar las actualizaciones de ubicación
+            handler.post(runnable) // Reanuda las actualizaciones de la cámara
+            Toast.makeText(this, "Ruta reanudada", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // Función para terminar la ruta y detener todos los cálculos
+    private fun endTracking() {
+        if (!isPaused) {
+            togglePauseState() // Si la ruta no está pausada, primero la pausamos
+        }
+
+        // Detener las actualizaciones de ubicación
+        fusedLocationClient.removeLocationUpdates(object : LocationCallback() {})
+
+        // Detener los cálculos de tiempo y distancia
+        isCalculating = false
+        calculationThread.interrupt() // Detiene el hilo de cálculo del tiempo
+
+        // Mostrar mensaje de finalización
+        Toast.makeText(this, "Ruta terminada", Toast.LENGTH_SHORT).show()
+
+        // Redirigir al usuario a otra pantalla (por ejemplo, la pantalla principal)
+        val intent = Intent(this, MainPanel::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        }
+        startActivity(intent)
+    }
+
+
 
     private fun startSpeedTracking() {
         startTime = System.currentTimeMillis()
@@ -508,5 +575,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
         return poly
     }
+
+
 }
 

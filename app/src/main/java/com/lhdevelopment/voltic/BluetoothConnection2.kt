@@ -7,6 +7,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
+import java.util.regex.Pattern
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -31,9 +32,13 @@ import kotlin.random.Random
 import android.content.res.Resources
 import kotlin.math.cos
 import android.app.ActivityOptions
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 class BluetoothConnection2 : ComponentActivity() {
+
     private val bluetoothAdapter: BluetoothAdapter? by lazy {
         BluetoothAdapter.getDefaultAdapter()
     }
@@ -57,13 +62,22 @@ class BluetoothConnection2 : ComponentActivity() {
         }
     }
 
+
     private val receiver = object : BroadcastReceiver() {
+        @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
             val action: String? = intent.action
             if (BluetoothDevice.ACTION_FOUND == action) {
                 val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                device?.let {
-                    addDeviceToLayout(it)
+                device?.let { bluetoothDevice ->
+                    // Filtra dispositivos por UUID
+                    val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                    val deviceUuids = bluetoothDevice.uuids
+                    val hasRequiredUuid = deviceUuids?.any { it.uuid == uuid } ?: false
+
+                    if (hasRequiredUuid) {
+                        addDeviceToLayout(bluetoothDevice) // Solo añade el dispositivo si tiene el UUID requerido
+                    }
                 }
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
                 startDiscovery()
@@ -71,8 +85,16 @@ class BluetoothConnection2 : ComponentActivity() {
         }
     }
 
+    private val placedDevices = mutableListOf<Pair<Int, Int>>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("voltage", "0.0 V")
+        editor.putString("chargePercentage", "0.0 %")
+        editor.apply()
 
         // Determinar la hora actual
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
@@ -107,6 +129,7 @@ class BluetoothConnection2 : ComponentActivity() {
         lottieAnimationView2.layoutParams = layoutParams
 
         devicesContainer = findViewById(R.id.devices_container)
+
 
         if (bluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth no está disponible en este dispositivo", Toast.LENGTH_SHORT).show()
@@ -155,11 +178,34 @@ class BluetoothConnection2 : ComponentActivity() {
         val minDistance = (20 * scale).toInt()
         val maxDistance = (50 * scale).toInt()
 
-        val angle = Random.nextDouble(0.0, 2 * Math.PI)
-        val distance = Random.nextInt(minDistance, maxDistance)
+        var x: Int
+        var y: Int
+        var validPosition: Boolean
 
-        val x = centerX + (distance * cos(angle)).toInt()
-        val y = centerY + (distance * sin(angle)).toInt()
+        // Generar una posición válida sin solapamiento
+        do {
+            val angle = Random.nextDouble(0.0, 2 * Math.PI)
+            val distance = Random.nextInt(minDistance, maxDistance)
+
+            x = centerX + (distance * cos(angle)).toInt()
+            y = centerY + (distance * sin(angle)).toInt()
+
+            validPosition = true
+            for ((placedX, placedY) in placedDevices) {
+                val dx = x - placedX
+                val dy = y - placedY
+                val distanceBetweenDevices = sqrt((dx * dx + dy * dy).toDouble()).toInt()
+
+                // Verifica si la distancia es menor que el tamaño mínimo para evitar solapamiento
+                if (distanceBetweenDevices < minDistance) {
+                    validPosition = false
+                    break
+                }
+            }
+        } while (!validPosition)
+
+        // Guardar la posición válida
+        placedDevices.add(Pair(x, y))
 
         val layoutParams = RelativeLayout.LayoutParams(
             RelativeLayout.LayoutParams.WRAP_CONTENT,
@@ -223,32 +269,43 @@ class BluetoothConnection2 : ComponentActivity() {
     @SuppressLint("MissingPermission")
     private fun connectToDevice(device: BluetoothDevice) {
         val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-        Thread {
-            try {
-                bluetoothAdapter?.cancelDiscovery()
-                Log.d("BluetoothConnection2", "Conectando a ${device.name} con UUID $uuid")
-                bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid)
-                bluetoothSocket?.connect()
-                runOnUiThread {
-                    Toast.makeText(this, "Conectado a ${device.name}", Toast.LENGTH_SHORT).show()
-                    navigateToMainPanel(true)
-                }
-                readDataFromDevice(bluetoothSocket)
-            } catch (e: IOException) {
-                Log.e("BluetoothConnection2", "Error al conectar con ${device.name}", e)
-                runOnUiThread {
-                    Toast.makeText(this, "Error al conectar con ${device.name}", Toast.LENGTH_SHORT).show()
-                    navigateToMainPanel(false)
-                }
+
+        // Verifica si el dispositivo tiene el UUID requerido
+        val deviceUuids = device.uuids
+        val hasRequiredUuid = deviceUuids?.any { it.uuid == uuid } ?: false
+
+        if (hasRequiredUuid) {
+            Thread {
                 try {
-                    bluetoothSocket?.close()
-                } catch (closeException: IOException) {
-                    Log.e("BluetoothConnection2", "Error al cerrar el socket", closeException)
-                    navigateToMainPanel(false)
+                    bluetoothAdapter?.cancelDiscovery()
+                    Log.d("BluetoothConnection2", "Conectando a ${device.name} con UUID $uuid")
+                    bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid)
+                    bluetoothSocket?.connect()
+                    runOnUiThread {
+                        Toast.makeText(this, "Conectado a ${device.name}", Toast.LENGTH_SHORT).show()
+                        navigateToMainPanel(true)
+                    }
+                    readDataFromDevice(bluetoothSocket)
+                } catch (e: IOException) {
+                    Log.e("BluetoothConnection2", "Error al conectar con ${device.name}", e)
+                    runOnUiThread {
+                        Toast.makeText(this, "Error al conectar con ${device.name}", Toast.LENGTH_SHORT).show()
+                        navigateToMainPanel(false)
+                    }
+                    try {
+                        bluetoothSocket?.close()
+                    } catch (closeException: IOException) {
+                        Log.e("BluetoothConnection2", "Error al cerrar el socket", closeException)
+                        navigateToMainPanel(false)
+                    }
                 }
-            }
-        }.start()
+            }.start()
+        } else {
+            Log.d("BluetoothConnection2", "El dispositivo ${device.name} no tiene el UUID requerido.")
+            Toast.makeText(this, "El dispositivo ${device.name} no tiene el UUID requerido.", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun cancelConnection() {
         bluetoothSocket?.let {
@@ -267,27 +324,74 @@ class BluetoothConnection2 : ComponentActivity() {
         }
     }
 
+    private fun parseBluetoothData(data: String) {
+        // Patrón para buscar números decimales (formato 0.00)
+        val pattern = Pattern.compile("\\d+\\.\\d+")
+        val matcher = pattern.matcher(data)
 
-    private fun readDataFromDevice(socket: BluetoothSocket?) {
-        socket?.let {
-            val inputStream = it.inputStream
-            val buffer = ByteArray(1024)
-            var bytes: Int
-            while (true) {
-                try {
-                    bytes = inputStream.read(buffer)
-                    val readMessage = String(buffer, 0, bytes)
-                    Log.d("BluetoothConnection2", "Datos recibidos: $readMessage")
-                    runOnUiThread {
-                        Toast.makeText(this, "Datos recibidos: $readMessage", Toast.LENGTH_SHORT).show()
-                    }
-                } catch (e: IOException) {
-                    Log.e("BluetoothConnection2", "Error al leer datos", e)
-                    break
+        // Contadores para almacenar los números parseados
+        var voltage: Double? = null
+        var percentage: Double? = null
+        var voltageFound = false
+        var percentageFound = false
+
+        // Encuentra y parsea los números
+        while (matcher.find()) {
+            val number = matcher.group()
+            try {
+                val value = number.toDouble()
+                if (!voltageFound) {
+                    voltage = value  // El primer número es el voltaje
+                    voltageFound = true
+                } else if (!percentageFound) {
+                    percentage = value  // El segundo número es el porcentaje
+                    percentageFound = true
                 }
+            } catch (e: NumberFormatException) {
+                Log.d("BluetoothConnection2", "Error al parsear número: $number")
+            }
+        }
+
+        // Verifica si ambos números fueron encontrados
+        if (voltage != null && percentage != null) {
+            Log.d("BluetoothConnection2", "Voltaje medido: $voltage V")
+            Log.d("BluetoothConnection2", "Porcentaje de carga: $percentage %")
+
+            // Actualiza SharedPreferences
+            val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
+            with(sharedPreferences.edit()) {
+                putString("voltage", voltage.toString())
+                putString("chargePercentage", percentage.toString())
+                apply()
+            }
+        } else {
+            Log.d("BluetoothConnection2", "No se pudieron parsear números del mensaje: $data")
+        }
+    }
+
+
+
+
+    private fun readDataFromDevice(bluetoothSocket: BluetoothSocket?) {
+        bluetoothSocket?.let { socket ->
+            try {
+                // InputStream para leer los datos del dispositivo Bluetooth
+                val inputStream = socket.inputStream
+                val reader = BufferedReader(InputStreamReader(inputStream))
+
+                // Bucle para leer los datos del dispositivo continuamente
+                var line: String?
+                while (reader.readLine().also { line = it } != null) {
+                    // Llama a la función parseBluetoothData para procesar los datos recibidos
+                    parseBluetoothData(line!!)
+                }
+
+            } catch (e: IOException) {
+                Log.d("BluetoothConnection2", "Error al leer datos desde el dispositivo: ${e.message}")
             }
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

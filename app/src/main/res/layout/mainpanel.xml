@@ -115,11 +115,12 @@
 
     <ImageView
         android:id="@+id/exitIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:src="@drawable/exit_icon"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="285dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="35dp"
         android:visibility="invisible"/>
 
     <com.lhdevelopment.voltic.ClippingImageView
@@ -258,7 +259,6 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@id/batterydataText"
                         android:layout_marginTop="3dp"
-                        android:text="100%"
                         android:layout_marginLeft="18dp"
                         android:textColor="@android:color/white"
                         android:fontFamily="@font/speed"
@@ -269,8 +269,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0.0"
-                        android:layout_toEndOf="@id/batterydataNumbers"
-                        android:layout_marginLeft="40dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_below="@id/distancedataText"
                         android:layout_marginTop="3dp"
                         android:textColor="@android:color/white"
@@ -292,17 +291,17 @@
 
                     <TextView
                         android:id="@+id/timedataNumbers"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="90dp"
+                        android:layout_height="50dp"
                         android:text="00:00"
-                        android:layout_toEndOf="@id/distancedataNumbers"
-                        android:layout_marginLeft="40dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="17dp"
                         android:layout_below="@id/timedataText"
                         android:layout_marginTop="3dp"
                         android:textColor="@android:color/white"
                         android:fontFamily="@font/speed"
                         android:textSize="40sp"
-                        android:visibility="invisible" />
+                        android:visibility="visible" />
 
                 </RelativeLayout>
             </RelativeLayout>
@@ -485,8 +484,8 @@
 
             <ImageView
                 android:id="@+id/mapIcon"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="5dp"
                 android:src="@drawable/map_icon" />
@@ -543,4 +542,35 @@
                 android:textSize="15sp" />
         </RelativeLayout>
     </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/maxSpeedIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/timeTextView"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:visibility="gone" >
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/max_speed_circle" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="40"
+            android:textSize="21dp"
+            android:textColor="@color/white"/>
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/speedWarning"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/speed_warning_icon"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/exitIcon"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp"
+        android:visibility="gone"/>
 </RelativeLayout>
