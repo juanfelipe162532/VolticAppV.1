@@ -67,23 +67,30 @@ class BluetoothConnection2 : ComponentActivity() {
         @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
             val action: String? = intent.action
+            // Si se encuentra un dispositivo Bluetooth
             if (BluetoothDevice.ACTION_FOUND == action) {
+                // Obtiene el dispositivo Bluetooth encontrado desde el Intent
                 val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                device?.let { bluetoothDevice ->
-                    // Filtra dispositivos por UUID
-                    val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-                    val deviceUuids = bluetoothDevice.uuids
-                    val hasRequiredUuid = deviceUuids?.any { it.uuid == uuid } ?: false
 
-                    if (hasRequiredUuid) {
-                        addDeviceToLayout(bluetoothDevice) // Solo añade el dispositivo si tiene el UUID requerido
-                    }
+                device?.let { bluetoothDevice ->
+                    // Comenta la parte que filtra por UUID para añadir todos los dispositivos
+                    // val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                    // val deviceUuids = bluetoothDevice.uuids
+                    // val hasRequiredUuid = deviceUuids?.any { it.uuid == uuid } ?: false
+
+                    // Si no deseas filtrar por UUID, añade el dispositivo directamente
+                    // Aquí añades el dispositivo sin importar su UUID
+                    addDeviceToLayout(bluetoothDevice) // Añade todos los dispositivos sin filtrar
                 }
-            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
+            }
+            // Si la búsqueda de dispositivos finalizó
+            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED == action) {
+                // Reinicia la búsqueda de dispositivos
                 startDiscovery()
             }
         }
     }
+
 
     private val placedDevices = mutableListOf<Pair<Int, Int>>()
 
@@ -268,42 +275,53 @@ class BluetoothConnection2 : ComponentActivity() {
 
     @SuppressLint("MissingPermission")
     private fun connectToDevice(device: BluetoothDevice) {
+        // El UUID utilizado para la conexión (ya no es necesario filtrar por él)
         val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
 
-        // Verifica si el dispositivo tiene el UUID requerido
-        val deviceUuids = device.uuids
-        val hasRequiredUuid = deviceUuids?.any { it.uuid == uuid } ?: false
+        // Comentar la verificación del UUID para conectar a cualquier dispositivo
+        // val deviceUuids = device.uuids
+        // val hasRequiredUuid = deviceUuids?.any { it.uuid == uuid } ?: false
 
-        if (hasRequiredUuid) {
-            Thread {
-                try {
-                    bluetoothAdapter?.cancelDiscovery()
-                    Log.d("BluetoothConnection2", "Conectando a ${device.name} con UUID $uuid")
-                    bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid)
-                    bluetoothSocket?.connect()
-                    runOnUiThread {
-                        Toast.makeText(this, "Conectado a ${device.name}", Toast.LENGTH_SHORT).show()
-                        navigateToMainPanel(true)
-                    }
-                    readDataFromDevice(bluetoothSocket)
-                } catch (e: IOException) {
-                    Log.e("BluetoothConnection2", "Error al conectar con ${device.name}", e)
-                    runOnUiThread {
-                        Toast.makeText(this, "Error al conectar con ${device.name}", Toast.LENGTH_SHORT).show()
-                        navigateToMainPanel(false)
-                    }
-                    try {
-                        bluetoothSocket?.close()
-                    } catch (closeException: IOException) {
-                        Log.e("BluetoothConnection2", "Error al cerrar el socket", closeException)
-                        navigateToMainPanel(false)
-                    }
+        // Remover la verificación del UUID para conectar sin importar si lo tiene
+        // if (hasRequiredUuid) {
+        Thread {
+            try {
+                // Cancelar la búsqueda de otros dispositivos
+                bluetoothAdapter?.cancelDiscovery()
+                Log.d("BluetoothConnection2", "Conectando a ${device.name} con UUID $uuid")
+
+                // Intentar crear y conectar el socket Bluetooth
+                bluetoothSocket = device.createRfcommSocketToServiceRecord(uuid)
+                bluetoothSocket?.connect()
+
+                // Notifica al usuario que la conexión fue exitosa
+                runOnUiThread {
+                    Toast.makeText(this, "Conectado a ${device.name}", Toast.LENGTH_SHORT).show()
+                    navigateToMainPanel(true) // Navega al panel principal después de la conexión
                 }
-            }.start()
-        } else {
-            Log.d("BluetoothConnection2", "El dispositivo ${device.name} no tiene el UUID requerido.")
-            Toast.makeText(this, "El dispositivo ${device.name} no tiene el UUID requerido.", Toast.LENGTH_SHORT).show()
-        }
+
+                // Lee los datos del dispositivo conectado
+                readDataFromDevice(bluetoothSocket)
+            } catch (e: IOException) {
+                // En caso de error al conectar
+                Log.e("BluetoothConnection2", "Error al conectar con ${device.name}", e)
+                runOnUiThread {
+                    Toast.makeText(this, "Error al conectar con ${device.name}", Toast.LENGTH_SHORT).show()
+                    navigateToMainPanel(false)
+                }
+                try {
+                    // Cierra el socket en caso de error
+                    bluetoothSocket?.close()
+                } catch (closeException: IOException) {
+                    Log.e("BluetoothConnection2", "Error al cerrar el socket", closeException)
+                    navigateToMainPanel(false)
+                }
+            }
+        }.start()
+        // } else {
+        //     Log.d("BluetoothConnection2", "El dispositivo ${device.name} no tiene el UUID requerido.")
+        //     Toast.makeText(this, "El dispositivo ${device.name} no tiene el UUID requerido.", Toast.LENGTH_SHORT).show()
+        // }
     }
 
 
@@ -428,10 +446,3 @@ class BluetoothConnection2 : ComponentActivity() {
         private const val REQUEST_ENABLE_BT = 1
     }
 }
-
-
-
-
-
-
-

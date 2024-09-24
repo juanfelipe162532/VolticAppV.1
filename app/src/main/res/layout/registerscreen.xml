@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/splashBackground"
+    android:background="?attr/gradient_background"
     android:padding="16dp"
     tools:context=".RegisterScreen">
 
@@ -153,7 +153,7 @@
         android:textSize="13sp"
         android:textStyle="bold"
         android:textColor="?attr/splashTextColor"
-        android:buttonTint="@color/checkbox_color"/>
+        android:buttonTint="#FFFFFF"/>
 
     <Button
         android:id="@+id/registerButton"

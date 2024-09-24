@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Sombra -->
+    <item android:bottom="2dp" android:left="5dp" android:right="2dp" android:top="5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#2D000000"/> <!-- Color de la sombra (semi-transparente negro) -->
+            <corners android:radius="25dp"/>
+        </shape>
+    </item>
+
+    <!-- Forma principal con gradiente -->
+    <item android:bottom="6dp" android:left="6dp" android:right="6dp" android:top="6dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="25dp"/> <!-- Radio de las esquinas redondeadas -->
+            <gradient
+                android:startColor="#282828"
+                android:centerColor="#000000"
+                android:endColor="#2F2F2F"
+                android:angle="270"/>
+        </shape>
+    </item>
+</layer-list>

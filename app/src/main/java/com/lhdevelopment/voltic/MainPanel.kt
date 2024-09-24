@@ -115,7 +115,6 @@ class MainPanel : ComponentActivity() {
 
         startLocationUpdates()
 
-        val exitIcon = findViewById<ImageView>(R.id.exitIcon)
         val halfMoonImageView = findViewById<ClippingImageView>(R.id.speedMeterShape)
         val speedMeterNumbers2 = findViewById<ImageView>(R.id.speedMeter_numbers)
         val speedMeterMetric = findViewById<TextView>(R.id.speedMeterMetric)
@@ -145,9 +144,6 @@ class MainPanel : ComponentActivity() {
         val timeDataNumbers = findViewById<TextView>(R.id.timedataNumbers)
         val speedMeterNumbers = findViewById<TextView>(R.id.speedMeterNumbers)
 
-        exitIcon.setOnClickListener {
-            finishAffinity()
-        }
 
         button1.setOnClickListener {
             val intent = Intent(this, StadisticsScreen::class.java)
@@ -232,10 +228,6 @@ class MainPanel : ComponentActivity() {
                             maxSpeed.alpha = 0f // Iniciar invisible
                             maxSpeed.animate().alpha(1f).setDuration(500).setStartDelay(900).start()
 
-                            exitIcon.visibility = View.VISIBLE
-                            exitIcon.alpha = 0f // Iniciar invisible
-                            exitIcon.animate().alpha(1f).setDuration(500).setStartDelay(1000)
-                                .start()
 
                             connectionStatusValidation.visibility = View.VISIBLE
 
@@ -531,7 +523,7 @@ class MainPanel : ComponentActivity() {
         val chargePercentage = sharedPreferences.getString("chargePercentage", "0.0") ?: "0.0"
 
 
-        batteryDataNumbers.text = "$chargePercentage %"
+        batteryDataNumbers.text = "$chargePercentage"
 
 
     }

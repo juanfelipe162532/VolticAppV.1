@@ -16,7 +16,7 @@
         android:id="@+id/gradientOverlay"
         android:layout_width="match_parent"
         android:layout_height="600dp"
-        android:background="@drawable/gradient_overlay"
+        android:background="?attr/gradient_overlay"
         android:layout_alignParentBottom="true" />
 
     <!-- Title TextView -->

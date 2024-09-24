@@ -109,19 +109,10 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="11dp"
             android:text="DESCONECTADO"
-            android:textColor="#FFFFFF"
+            android:textColor="#FF0000"
             android:textStyle="bold"/>
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/exitIcon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/exit_icon"
-        android:layout_marginTop="10dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="35dp"
-        android:visibility="invisible"/>
+    
 
     <com.lhdevelopment.voltic.ClippingImageView
         android:id="@+id/speedMeterShape"
@@ -169,7 +160,7 @@
         android:layout_below="@id/speedMeterMetric"
         android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/data_rectangle"
+        android:background="?attr/main_panel_rectangle"
         android:visibility="invisible">
 
         <RelativeLayout
@@ -224,7 +215,7 @@
                         android:layout_marginTop="3dp"
                         android:text="Bateria"
                         android:layout_marginLeft="20dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:textStyle="normal"
                         android:textSize="16sp"
                         android:visibility="invisible"/>
@@ -236,7 +227,7 @@
                         android:text="Distancia"
                         android:layout_toEndOf="@+id/batterydataText"
                         android:layout_marginLeft="36dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:textStyle="normal"
                         android:textSize="16sp"
                         android:visibility="invisible"/>
@@ -248,7 +239,7 @@
                         android:text="Tiempo"
                         android:layout_toEndOf="@+id/distancedataText"
                         android:layout_marginLeft="36dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:textStyle="normal"
                         android:textSize="16sp"
                         android:visibility="invisible"/>
@@ -260,7 +251,7 @@
                         android:layout_below="@id/batterydataText"
                         android:layout_marginTop="3dp"
                         android:layout_marginLeft="18dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:fontFamily="@font/speed"
                         android:textSize="40sp"
                         android:visibility="invisible"/>
@@ -272,7 +263,7 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@id/distancedataText"
                         android:layout_marginTop="3dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:fontFamily="@font/speed"
                         android:textSize="40sp"
                         android:visibility="invisible" />
@@ -285,7 +276,7 @@
                         android:layout_marginLeft="3dp"
                         android:layout_below="@id/distancedataText"
                         android:layout_marginTop="18dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:textSize="15sp"
                         android:visibility="invisible"/>
 
@@ -298,11 +289,10 @@
                         android:layout_marginRight="17dp"
                         android:layout_below="@id/timedataText"
                         android:layout_marginTop="3dp"
-                        android:textColor="@android:color/white"
+                        android:textColor="?attr/rectangleIconColor"
                         android:fontFamily="@font/speed"
                         android:textSize="40sp"
                         android:visibility="visible" />
-
                 </RelativeLayout>
             </RelativeLayout>
         </RelativeLayout>
@@ -327,15 +317,15 @@
             android:id="@+id/rectangle1"
             android:layout_width="100dp"
             android:layout_height="80dp"
-            android:background="@drawable/data_rectangle"
+            android:background="?attr/main_panel_rectangle"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/stadisticsIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/stadistics_icon" />
 
             <TextView
@@ -345,7 +335,7 @@
                 android:layout_below="@id/stadisticsIcon"
                 android:layout_centerHorizontal="true"
                 android:text="Estadisticas"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -364,15 +354,15 @@
             android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/data_rectangle"
+            android:background="?attr/main_panel_rectangle"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/historyIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/history_icon" />
 
             <TextView
@@ -382,7 +372,7 @@
                 android:layout_below="@id/historyIcon"
                 android:layout_centerHorizontal="true"
                 android:text="Historial"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -401,15 +391,15 @@
             android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_marginStart="222dp"
-            android:background="@drawable/data_rectangle"
+            android:background="?attr/main_panel_rectangle"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/servicesIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/services_icon" />
 
             <TextView
@@ -419,7 +409,7 @@
                 android:layout_below="@+id/servicesIcon"
                 android:layout_centerHorizontal="true"
                 android:text="Servicios"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -439,15 +429,15 @@
             android:layout_height="80dp"
             android:layout_below="@id/rectangle1"
             android:layout_marginTop="15dp"
-            android:background="@drawable/data_rectangle"
+            android:background="?attr/main_panel_rectangle"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/settingsIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/settings_icon" />
 
             <TextView
@@ -457,7 +447,7 @@
                 android:layout_below="@id/settingsIcon"
                 android:layout_centerHorizontal="true"
                 android:text="Ajustes"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -479,15 +469,15 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@id/rectangle2"
             android:layout_marginTop="15dp"
-            android:background="@drawable/data_rectangle"
+            android:background="?attr/main_panel_rectangle"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/mapIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/map_icon" />
 
             <TextView
@@ -497,7 +487,7 @@
                 android:layout_below="@id/mapIcon"
                 android:layout_centerHorizontal="true"
                 android:text="Nueva ruta"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -519,15 +509,15 @@
             android:layout_below="@id/rectangle3"
             android:layout_marginTop="15dp"
             android:layout_marginStart="222dp"
-            android:background="@drawable/data_rectangle"
+            android:background="?attr/main_panel_rectangle"
             android:visibility="invisible">
 
             <ImageView
                 android:id="@+id/batteryIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="8dp"
                 android:src="@drawable/battery_icon" />
 
             <TextView
@@ -537,7 +527,7 @@
                 android:layout_below="@+id/batteryIcon"
                 android:layout_centerHorizontal="true"
                 android:text="Bateria"
-                android:textColor="@android:color/white"
+                android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
         </RelativeLayout>
@@ -569,7 +559,6 @@
         android:layout_height="50dp"
         android:src="@drawable/speed_warning_icon"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/exitIcon"
         android:layout_marginTop="20dp"
         android:layout_marginRight="15dp"
         android:visibility="gone"/>
