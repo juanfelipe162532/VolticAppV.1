@@ -46,7 +46,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:text="VERIFICANDO CONEXIÓN"
+            android:text="@string/verificando_conexi_n"
             android:textColor="@color/white"
             android:textStyle="bold"/>
     </RelativeLayout>
@@ -77,7 +77,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:text="CONECTADO"
+            android:text="@string/conectado"
             android:textColor="#6f0"
             android:textStyle="bold"/>
     </RelativeLayout>
@@ -108,7 +108,7 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginStart="11dp"
-            android:text="DESCONECTADO"
+            android:text="@string/desconectado"
             android:textColor="#FF0000"
             android:textStyle="bold"/>
     </RelativeLayout>
@@ -213,7 +213,7 @@
                         android:layout_width="70dp"
                         android:layout_height="20dp"
                         android:layout_marginTop="3dp"
-                        android:text="Bateria"
+                        android:text="@string/bateria"
                         android:layout_marginLeft="20dp"
                         android:textColor="?attr/rectangleIconColor"
                         android:textStyle="normal"
@@ -224,7 +224,7 @@
                         android:layout_width="75dp"
                         android:layout_height="20dp"
                         android:layout_marginTop="3dp"
-                        android:text="Distancia"
+                        android:text="@string/distancia"
                         android:layout_toEndOf="@+id/batterydataText"
                         android:layout_marginLeft="36dp"
                         android:textColor="?attr/rectangleIconColor"
@@ -236,7 +236,7 @@
                         android:layout_width="75dp"
                         android:layout_height="20dp"
                         android:layout_marginTop="3dp"
-                        android:text="Tiempo"
+                        android:text="@string/tiempo"
                         android:layout_toEndOf="@+id/distancedataText"
                         android:layout_marginLeft="36dp"
                         android:textColor="?attr/rectangleIconColor"
@@ -334,7 +334,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/stadisticsIcon"
                 android:layout_centerHorizontal="true"
-                android:text="Estadisticas"
+                android:text="@string/estadisticas"
                 android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
@@ -371,7 +371,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/historyIcon"
                 android:layout_centerHorizontal="true"
-                android:text="Historial"
+                android:text="@string/historial"
                 android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
@@ -408,7 +408,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/servicesIcon"
                 android:layout_centerHorizontal="true"
-                android:text="Servicios"
+                android:text="@string/servicios"
                 android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
@@ -446,7 +446,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/settingsIcon"
                 android:layout_centerHorizontal="true"
-                android:text="Ajustes"
+                android:text="@string/ajustes"
                 android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
@@ -486,7 +486,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/mapIcon"
                 android:layout_centerHorizontal="true"
-                android:text="Nueva ruta"
+                android:text="@string/nueva_ruta"
                 android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />
@@ -526,7 +526,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/batteryIcon"
                 android:layout_centerHorizontal="true"
-                android:text="Bateria"
+                android:text="@string/bateriaboton"
                 android:textColor="?attr/rectangleIconColor"
                 android:textStyle="bold"
                 android:textSize="15sp" />

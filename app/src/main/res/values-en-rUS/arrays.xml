@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification Frequency -->
+    <string-array name="notification_frequency_options">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
+
+    <string-array name="notification_frequency_values">
+        <item>1</item>
+        <item>7</item>
+        <item>30</item>
+    </string-array>
+
+    <!-- Languages -->
+    <string-array name="language_options">
+        <item>Spanish</item>
+        <item>English</item>
+        <item>French</item>
+    </string-array>
+
+    <string-array name="language_values">
+        <item>es</item>
+        <item>en</item>
+        <item>fr</item>
+    </string-array>
+
+    <!-- Measurement Units -->
+    <string-array name="unit_measurement_options">
+        <item>km/h</item>
+        <item>mph</item>
+    </string-array>
+
+    <string-array name="unit_measurement_values">
+        <item>kmh</item>
+        <item>mph</item>
+    </string-array>
+
+    <!-- Distance Format -->
+    <string-array name="distance_format_options">
+        <item>Kilometers</item>
+        <item>Miles</item>
+    </string-array>
+
+    <string-array name="distance_format_values">
+        <item>km</item>
+        <item>mi</item>
+    </string-array>
+</resources>

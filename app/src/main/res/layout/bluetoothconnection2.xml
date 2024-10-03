@@ -11,10 +11,24 @@
         android:id="@+id/title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Asistente de conexión"
+        android:text="@string/asistente_de_conexi_n"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="?attr/splashLogoColor1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+    <TextView
+        android:id="@+id/subtitle_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/por_favor_selecciona_un_dispositivo_bluetooth_cercano_para_conectarte"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_below="@+id/title_text"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        android:textColor="?attr/splashTextColor"
+        android:textAlignment="center"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp" />
 
@@ -37,6 +51,20 @@
         android:layout_centerInParent="true"
         app:lottie_autoPlay="true"
         app:lottie_loop="true" />
+    <TextView
+        android:id="@+id/subtitle_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/si_no_ves_el_dispositivo_aseg_rate_de_que_est_encendido_y_dentro_del_rango"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_below="@+id/lottieAnimationView"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        android:textColor="?attr/splashTextColor"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp" />
 
     <RelativeLayout
         android:id="@+id/devices_container"

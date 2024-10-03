@@ -2,11 +2,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/gradientOverlay"
+    <!-- Contenedor para el fragmento de configuración -->
+    <FrameLayout
+        android:id="@+id/settings_container"
         android:layout_width="match_parent"
-        android:layout_height="1000dp"
-        android:background="@drawable/gradient_overlay_2_day"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="wrap_content" /> <!-- Esto lo coloca sobre la vista personalizada -->
 
 </RelativeLayout>

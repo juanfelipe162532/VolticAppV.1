@@ -16,7 +16,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="@drawable/gradient_fade_bottom_red"
+        android:background="@drawable/gradient_fade_bottom_day"
         android:layout_alignParentBottom="true" />
 
     <RelativeLayout
@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="110dp"
-        android:text="Distancia"
+        android:text="@string/distancia"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:textSize="20sp"/>
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="110dp"
         android:layout_centerHorizontal="true"
-        android:text="Tiempo"
+        android:text="@string/tiempo"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:textSize="20sp"/>
@@ -112,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="110dp"
         android:layout_centerHorizontal="true"
-        android:text="Velocidad"
+        android:text="@string/velocidad"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:textSize="20sp"/>
@@ -153,11 +153,11 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/map"
         android:layout_marginTop="-90dp"
-        android:text="INICIAR"
+        android:text="@string/iniciar"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="@drawable/button_background_white"
-        android:textColor="?attr/main_panel_rectangle"
+        android:textColor="?attr/splashBetaLogoColor2"
         android:visibility="gone"/>
 
     <Button
@@ -167,11 +167,11 @@
         android:layout_marginLeft="15dp"
         android:layout_below="@+id/map"
         android:layout_marginTop="-90dp"
-        android:text="PAUSAR"
+        android:text="@string/pausar"
         android:textSize="20sp"
         android:textStyle="bold"
         android:background="@drawable/button_background_white"
-        android:textColor="?attr/main_panel_rectangle"
+        android:textColor="?attr/splashBetaLogoColor2"
         android:visibility="gone"/>
 
     <Button
@@ -181,11 +181,11 @@
         android:layout_marginLeft="15dp"
         android:layout_below="@+id/map"
         android:layout_marginTop="-90dp"
-        android:text="REANUDAR"
+        android:text="@string/reanudar"
         android:textSize="15sp"
         android:textStyle="bold"
         android:background="@drawable/button_background_white"
-        android:textColor="?attr/main_panel_rectangle"
+        android:textColor="?attr/splashBetaLogoColor2"
         android:visibility="gone"/>
 
     <Button
@@ -196,11 +196,11 @@
         android:layout_marginRight="15dp"
         android:layout_below="@+id/map"
         android:layout_marginTop="-90dp"
-        android:text="TERMINAR"
+        android:text="@string/terminar"
         android:textSize="15sp"
         android:textStyle="bold"
         android:background="@drawable/button_background_white"
-        android:textColor="?attr/main_panel_rectangle"
+        android:textColor="?attr/splashBetaLogoColor2"
         android:visibility="gone"/>
 
     <Button

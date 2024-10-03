@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Notificaciones -->
+    <PreferenceCategory android:title="@string/notificaciones">
+        <SwitchPreferenceCompat
+            android:key="notifications_enabled"
+            android:title="@string/activar_notificaciones"
+            android:summary="@string/recibir_alertas_sobre_bater_a_mantenimiento_etc"
+            android:defaultValue="true" />
+
+        <ListPreference
+            android:key="notification_frequency"
+            android:title="@string/frecuencia_de_notificaciones"
+            android:summary="@string/selecciona_la_frecuencia_de_las_notificaciones"
+            android:entries="@array/notification_frequency_options"
+            android:entryValues="@array/notification_frequency_values"
+            android:defaultValue="1" />
+    </PreferenceCategory>
+
+    <!-- Preferencias de idioma -->
+    <PreferenceCategory android:title="@string/preferencias_de_idioma">
+        <ListPreference
+            android:key="language_preference"
+            android:title="@string/seleccionar_idioma"
+            android:summary="@string/cambiar_el_idioma_de_la_aplicaci_n"
+            android:entries="@array/language_options"
+            android:entryValues="@array/language_values"
+            android:defaultValue="es" />
+    </PreferenceCategory>
+
+    <!-- Recomendaciones personalizadas -->
+    <PreferenceCategory android:title="@string/recomendaciones_personalizadas">
+        <SwitchPreferenceCompat
+            android:key="personalized_recommendations"
+            android:title="@string/activar_recomendaciones_personalizadas"
+            android:summary="@string/recibir_recomendaciones_basadas_en_el_uso"
+            android:defaultValue="true" />
+
+        <Preference
+            android:key="reset_recommendations"
+            android:title="@string/restablecer_recomendaciones"
+            android:summary="@string/restablecer_recomendaciones_personalizadas" />
+    </PreferenceCategory>
+
+    <!-- Gestión de Bluetooth -->
+    <PreferenceCategory android:title="@string/conexi_n_bluetooth">
+        <Preference
+            android:key="reset_bluetooth"
+            android:title="@string/reiniciar_conexi_n_bluetooth"
+            android:summary="@string/forzar_la_reconexi_n_con_el_veh_culo" />
+
+        <Preference
+            android:key="pair_new_device"
+            android:title="@string/emparejar_nuevo_dispositivo"
+            android:summary="@string/conectar_con_otra_patineta_el_ctrica" />
+    </PreferenceCategory>
+
+    <!-- Modo Oscuro/Claro -->
+    <PreferenceCategory android:title="@string/apariencia">
+        <SwitchPreferenceCompat
+            android:key="dark_mode"
+            android:title="@string/activar_modo_oscuro"
+            android:summary="@string/activar_el_modo_oscuro_para_ahorrar_bater_a"
+            android:defaultValue="false" />
+
+        <SwitchPreferenceCompat
+            android:key="auto_theme"
+            android:title="@string/cambio_autom_tico_de_tema"
+            android:summary="@string/cambiar_el_tema_autom_ticamente_seg_n_la_hora" />
+    </PreferenceCategory>
+
+    <!-- Personalización de la Interfaz -->
+    <PreferenceCategory android:title="@string/personalizaci_n_de_la_interfaz">
+        <ListPreference
+            android:key="units_measurement"
+            android:title="@string/unidades_de_medida"
+            android:summary="@string/seleccionar_entre_km_h_o_mph"
+            android:entries="@array/unit_measurement_options"
+            android:entryValues="@array/unit_measurement_values"
+            android:defaultValue="kmh" />
+
+        <ListPreference
+            android:key="distance_format"
+            android:title="@string/formato_de_distancia"
+            android:summary="@string/seleccionar_entre_kil_metros_o_millas"
+            android:entries="@array/distance_format_options"
+            android:entryValues="@array/distance_format_values"
+            android:defaultValue="km" />
+    </PreferenceCategory>
+
+    <!-- Información de la app -->
+    <PreferenceCategory android:title="@string/informaci_n_de_la_aplicaci_n">
+        <Preference
+            android:key="privacy_policy"
+            android:title="@string/pol_tica_de_privacidad"
+            android:summary="@string/consulta_nuestra_pol_tica_de_privacidad" />
+
+        <Preference
+            android:key="about_app"
+            android:title="@string/acerca_de_la_aplicaci_n"
+            android:summary="@string/versi_n_desarrollador_y_otros_detalles" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -27,5 +27,5 @@
         android:textSize="12dp"
         android:layout_marginTop="700dp"
         android:textColor="?attr/splashTextColor"
-        android:text="Voltic App® Todos los derechos reservados" />
+        android:text="@string/voltic_app_todos_los_derechos_reservados" />
 </RelativeLayout>

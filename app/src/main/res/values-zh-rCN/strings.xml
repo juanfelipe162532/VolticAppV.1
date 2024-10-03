@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Voltic</string>
+    <string name="title_activity_welcome1">欢迎!</string>
+    <string name="listo_para_empezar">准备开始了吗？</string>
+    <string name="empieza_a_disfrutar_de_una_experiencia_nica_con_tu_patineta_el_ctrica">开始享受电动滑板的独特体验吧！</string>
+    <string name="continuar">继续</string>
+    <string name="personaliza_tu_experiencia">个性化您的体验</string>
+    <string name="recibe_consejos_y_sugerencias_personalizadas_para_mejorar_la_eficiencia_y_rendimiento_de_tu_patineta">获取个性化建议以提升滑板的效率和性能。</string>
+    <string name="saltar">跳过</string>
+    <string name="siguiente">下一步</string>
+    <string name="bienvenido_a_voltic">欢迎使用 Voltic！</string>
+    <string name="tu_compa_ero_perfecto_para_monitorear_y_gestionar_tu_patineta_el_ctrica">您监控和管理电动滑板的完美伴侣。</string>
+    <string name="monitorea_en_tiempo_real">实时监控</string>
+    <string name="obt_n_informaci_n_instant_nea_sobre_la_velocidad_distancia_recorrida_y_estado_de_la_bater_a_de_tu_patineta">即时获取滑板的速度、行驶距离和电池状态信息。</string>
+    <string name="voltic_app_todos_los_derechos_reservados">Voltic App® 版权所有</string>
+    <string name="si_no_ves_el_dispositivo_aseg_rate_de_que_est_encendido_y_dentro_del_rango">如果未找到设备，请确保设备已开启且在范围内。</string>
+    <string name="por_favor_selecciona_un_dispositivo_bluetooth_cercano_para_conectarte">请选择附近的蓝牙设备进行连接。</string>
+    <string name="verificando_conexi_n">正在检查连接</string>
+    <string name="conectado">已连接</string>
+    <string name="desconectado">未连接</string>
+    <string name="bateria">电池</string>
+    <string name="distancia">距离</string>
+    <string name="tiempo">时间</string>
+    <string name="historial">历史记录</string>
+    <string name="servicios">服务</string>
+    <string name="ajustes">设置</string>
+    <string name="nueva_ruta">新路线</string>
+    <string name="bateriaboton">电池</string>
+    <string name="busca_o_selecciona_un_punto_en_el_mapa">搜索或选择地图上的一个点</string>
+    <string name="velocidad">速度</string>
+    <string name="iniciar">开始</string>
+    <string name="pausar">暂停</string>
+    <string name="reanudar">继续</string>
+    <string name="terminar">结束</string>
+    <string name="asistente_de_conexi_n">连接助手</string>
+    <string name="estadisticas">统计数据</string>
+    <string name="desde_d_nde_quieres_ir">你想从哪里开始？</string>
+    <string name="hacia_d_nde_quieres_ir">你想去哪里？</string>
+</resources>

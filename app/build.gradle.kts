@@ -75,6 +75,7 @@ dependencies {
     implementation(libs.jbcrypt)
     implementation(libs.play.services.maps)
     implementation(libs.places)
+    implementation(libs.androidx.preference)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

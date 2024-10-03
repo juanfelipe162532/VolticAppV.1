@@ -307,14 +307,12 @@ class BluetoothConnection2 : ComponentActivity() {
                 Log.e("BluetoothConnection2", "Error al conectar con ${device.name}", e)
                 runOnUiThread {
                     Toast.makeText(this, "Error al conectar con ${device.name}", Toast.LENGTH_SHORT).show()
-                    navigateToMainPanel(false)
                 }
                 try {
                     // Cierra el socket en caso de error
                     bluetoothSocket?.close()
                 } catch (closeException: IOException) {
                     Log.e("BluetoothConnection2", "Error al cerrar el socket", closeException)
-                    navigateToMainPanel(false)
                 }
             }
         }.start()
