@@ -6,8 +6,9 @@ data class ApiResponse(
 )
 
 data class AuthResponse(
-    val success: Boolean,
-    val message: String
+    val statusCode: Int,
+    val message: String,
+    val ID_Usuario: Int
 )
 
 

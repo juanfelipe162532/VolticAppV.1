@@ -69,7 +69,7 @@ class MainPanel : ComponentActivity() {
         override fun run() {
             loadAndDisplayData()
             // Ejecutar nuevamente después de 1 segundo (1000 ms)
-            dataHandler.postDelayed(this, 1000)
+            dataHandler.postDelayed(this, 10)
         }
     }
 
@@ -519,12 +519,12 @@ class MainPanel : ComponentActivity() {
     private fun loadAndDisplayData() {
         // Recuperar datos de SharedPreferences
         val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        //val voltage = sharedPreferences.getString("voltage", "0.0") ?: "0.0"
-        val chargePercentage = sharedPreferences.getString("chargePercentage", "0.0") ?: "0.0"
 
+        // Recuperar el porcentaje de carga como un entero
+        val chargePercentage = sharedPreferences.getInt("chargePercentage", 0) // Recuperar como entero, con 0 como valor por defecto
 
-        batteryDataNumbers.text = "$chargePercentage"
-
-
+        // Mostrar el porcentaje de carga en el TextView
+        batteryDataNumbers.text = "$chargePercentage %"
     }
+
 }

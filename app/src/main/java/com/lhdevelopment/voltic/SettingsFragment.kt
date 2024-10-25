@@ -1,25 +1,45 @@
 package com.lhdevelopment.voltic
 
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
+import androidx.appcompat.app.AppCompatActivity
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
     }
 
-    // Método opcional, no es necesario para preferencias, pero lo incluimos para depuración
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        Log.d("SettingsFragment", "onCreateView called") // Log para depurar
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
+        if (key == "language_preference") {
+            val selectedLanguage = sharedPreferences?.getString(key, "es") ?: "es"
+
+            // Guardar el idioma en SharedPreferences
+            val prefs = requireActivity().getSharedPreferences("settings", AppCompatActivity.MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.putString("language_preference", selectedLanguage)
+            editor.apply()
+
+            // Aplicar el cambio globalmente
+            (activity as? SettingsScreen)?.let {
+                it.setLocale(selectedLanguage)
+                it.recreate() // Recargar la actividad para aplicar los cambios
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .registerOnSharedPreferenceChangeListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .unregisterOnSharedPreferenceChangeListener(this)
     }
 }

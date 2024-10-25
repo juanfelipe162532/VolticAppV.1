@@ -341,13 +341,13 @@ class BluetoothConnection2 : ComponentActivity() {
     }
 
     private fun parseBluetoothData(data: String) {
-        // Patrón para buscar números decimales (formato 0.00)
-        val pattern = Pattern.compile("\\d+\\.\\d+")
+        // Patrón para buscar números enteros
+        val pattern = Pattern.compile("\\d+")
         val matcher = pattern.matcher(data)
 
-        // Contadores para almacenar los números parseados
-        var voltage: Double? = null
-        var percentage: Double? = null
+        // Variables para almacenar los números parseados
+        var voltage: Int? = null
+        var percentage: Int? = null
         var voltageFound = false
         var percentageFound = false
 
@@ -355,12 +355,12 @@ class BluetoothConnection2 : ComponentActivity() {
         while (matcher.find()) {
             val number = matcher.group()
             try {
-                val value = number.toDouble()
+                val value = number.toInt() // Parseamos el número como Int
                 if (!voltageFound) {
                     voltage = value  // El primer número es el voltaje
                     voltageFound = true
                 } else if (!percentageFound) {
-                    percentage = value  // El segundo número es el porcentaje
+                    percentage = value // El segundo número es el porcentaje
                     percentageFound = true
                 }
             } catch (e: NumberFormatException) {
@@ -376,16 +376,14 @@ class BluetoothConnection2 : ComponentActivity() {
             // Actualiza SharedPreferences
             val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
             with(sharedPreferences.edit()) {
-                putString("voltage", voltage.toString())
-                putString("chargePercentage", percentage.toString())
+                putInt("voltage", voltage)
+                putInt("chargePercentage", percentage)
                 apply()
             }
         } else {
             Log.d("BluetoothConnection2", "No se pudieron parsear números del mensaje: $data")
         }
     }
-
-
 
 
     private fun readDataFromDevice(bluetoothSocket: BluetoothSocket?) {

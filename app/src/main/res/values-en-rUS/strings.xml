@@ -13,7 +13,7 @@
     <string name="monitorea_en_tiempo_real">Monitor in Real Time</string>
     <string name="obt_n_informaci_n_instant_nea_sobre_la_velocidad_distancia_recorrida_y_estado_de_la_bater_a_de_tu_patineta">Get instant information about the speed, distance traveled, and battery status of your skateboard.</string>
     <string name="voltic_app_todos_los_derechos_reservados">Voltic App® All rights reserved</string>
-    <string name="si_no_ves_el_dispositivo_aseg_rate_de_que_est_encendido_y_dentro_del_rango">If you don't see the device, make sure it's on and within range.</string>
+    <string name="si_no_ves_el_dispositivo_aseg_rate_de_que_est_encendido_y_dentro_del_rango">If you do not see the device, make sure it is on and within range.</string>
     <string name="por_favor_selecciona_un_dispositivo_bluetooth_cercano_para_conectarte">Please select a nearby Bluetooth device to connect.</string>
     <string name="verificando_conexi_n">CHECKING CONNECTION</string>
     <string name="conectado">CONNECTED</string>
@@ -69,4 +69,7 @@
     <string name="notificaciones">Notifications</string>
     <string name="preferencias_de_idioma">Language preferences</string>
     <string name="cambiar_el_idioma_de_la_aplicaci_n">Change the language of the application</string>
+    <string name="conectando">CONNECTING</string>
+    <string name="nombre_del_dispositivo">Device name</string>
+    <string name="cancelar">Cancel</string>
 </resources>

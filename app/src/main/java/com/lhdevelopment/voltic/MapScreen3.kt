@@ -319,7 +319,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
-        showRoute(this)
+        showRoute(this, ApiClient.apiService)
         loadingScreen.visibility = View.GONE
         backButton.visibility = View.VISIBLE
         startRouteButton.visibility = View.VISIBLE
@@ -348,7 +348,7 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun showRoute(context: Context) {
+    private fun showRoute(context: Context, apiService: ApiService) {
         val sharedPreferences = context.getSharedPreferences("MapPreferences", Context.MODE_PRIVATE)
         val startLatitude = sharedPreferences.getString("START_LATITUDE", null)?.toDouble()
         val startLongitude = sharedPreferences.getString("START_LONGITUDE", null)?.toDouble()
@@ -365,6 +365,10 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
             // Muestra la ruta inicial
             updateRoute(startLocation)
+
+            val userId = getUserId(context)
+            val routeManager = RouteManager(apiService)
+            routeManager.sendRouteData(userId, startLatitude, startLongitude, endLatitude, endLongitude, context)
         } else {
             Log.d("RouteDisplay", "No se encontraron coordenadas guardadas para la ruta.")
         }
@@ -419,6 +423,11 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         } else {
             Log.d("RouteUpdate", "No se encontraron coordenadas de destino.")
         }
+    }
+
+    private fun getUserId(context: Context): Int {
+        val sharedPreferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        return sharedPreferences.getInt("ID_Usuario", -1) // Devuelve -1 si no se encuentra
     }
 
     // Agregar nuevos puntos a la ruta y redibujar la polilínea
@@ -575,7 +584,5 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         }
         return poly
     }
-
-
 }
 

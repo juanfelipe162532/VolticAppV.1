@@ -2,6 +2,7 @@ package com.lhdevelopment.voltic
 
 import android.content.Intent
 import android.graphics.Color
+import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -12,12 +13,7 @@ import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.ComponentActivity
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,19 +32,14 @@ class LoginScreen : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Determinar la hora actual
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-
-        // Establecer el tema basado en la hora: modo oscuro entre 6 PM y 6 AM
         val themeResId = if (currentHour >= 18 || currentHour < 6) {
             R.style.Theme_VolticAppV1_Night
         } else {
             R.style.Theme_VolticAppV1_Day
         }
 
-        // Aplicar el tema
         setTheme(themeResId)
-
         setContentView(R.layout.loginscreen)
 
         val usernameEditText: EditText = findViewById(R.id.usernameEditText)
@@ -78,20 +69,26 @@ class LoginScreen : ComponentActivity() {
         registerText.movementMethod = LinkMovementMethod.getInstance()
 
         loginButton.setOnClickListener {
-            val username = usernameEditText.text.toString()
-            val password = passwordEditText.text.toString()
+            val username = usernameEditText.text.toString().trim()
+            val password = passwordEditText.text.toString().trim()
             val rememberMe = rememberMeCheckBox.isChecked
 
-            if (username.isNotEmpty() && password.isNotEmpty()) {
-                val fullUrl = "https://ykyoaekhp9.execute-api.us-east-1.amazonaws.com/Stage1/login/"
-                loginUser(fullUrl, username, password, rememberMe)
-            } else {
-                Toast.makeText(this, "Por favor, completa todos los campos", Toast.LENGTH_SHORT).show()
+            when {
+                username.isEmpty() -> {
+                    Toast.makeText(this, "El nombre de usuario no puede estar vacío", Toast.LENGTH_SHORT).show()
+                    usernameEditText.requestFocus()
+                }
+                password.isEmpty() -> {
+                    Toast.makeText(this, "La contraseña no puede estar vacía", Toast.LENGTH_SHORT).show()
+                    passwordEditText.requestFocus()
+                }
+                else -> {
+                    val fullUrl = "https://ykyoaekhp9.execute-api.us-east-1.amazonaws.com/Stage1/login/"
+                    loginUser(fullUrl, username, password, rememberMe)
+                }
             }
         }
     }
-
-
 
     private fun loginUser(fullUrl: String, username: String, password: String, rememberMe: Boolean) {
         val userJsonObject = JSONObject().apply {
@@ -105,13 +102,30 @@ class LoginScreen : ComponentActivity() {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 if (response.isSuccessful) {
                     val authResponse = response.body()
-                    Log.d(TAG, "Respuesta del servidor: ${authResponse?.message}")
-                    Toast.makeText(this@LoginScreen, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
-                    navigateToBluetoothConnection()
-                    if (rememberMe) {
-                        saveUserCredentials(username, password)
+
+                    // Verifica si la respuesta es nula
+                    if (authResponse != null) {
+                        val idUsuario = authResponse.ID_Usuario
+                        val message = authResponse.message // Accede al mensaje
+
+                        Log.d(TAG, "ID_Usuario obtenido: $idUsuario, Mensaje: $message")
+
+                        // Comprobar ID_Usuario y manejar la lógica de navegación
+                        if (idUsuario != 0) {
+                            saveUserId(idUsuario, this@LoginScreen)
+
+                            if (rememberMe) {
+                                saveUserCredentials(username, password)
+                            }
+
+                            navigateToBluetoothConnection()
+                        } else {
+                            Toast.makeText(this@LoginScreen, "Error de autenticación: ID de usuario inválido", Toast.LENGTH_SHORT).show()
+                            Log.d(TAG, "ID_Usuario es 0, acceso denegado")
+                        }
+                    } else {
+                        Log.e(TAG, "Respuesta vacía del servidor")
                     }
-                    navigateToBluetoothConnection()
                 } else {
                     Log.e(TAG, "Error en el inicio de sesión: ${response.code()}")
                     Toast.makeText(this@LoginScreen, "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
@@ -137,57 +151,24 @@ class LoginScreen : ComponentActivity() {
     private fun togglePasswordVisibility(passwordEditText: EditText, toggle: ImageView) {
         if (passwordEditText.transformationMethod is PasswordTransformationMethod) {
             passwordEditText.transformationMethod = HideReturnsTransformationMethod.getInstance()
-            toggle.setImageResource(R.drawable.ic_eye_off)  // Cambia el ícono para indicar que la contraseña es visible
+            toggle.setImageResource(R.drawable.ic_eye_off)
         } else {
             passwordEditText.transformationMethod = PasswordTransformationMethod.getInstance()
-            toggle.setImageResource(R.drawable.ic_eye)  // Cambia el ícono para indicar que la contraseña está oculta
+            toggle.setImageResource(R.drawable.ic_eye)
         }
         passwordEditText.setSelection(passwordEditText.text.length)
     }
 
     private fun navigateToBluetoothConnection() {
-        val intent = Intent(this, BluetoothConnection1::class.java)
+        val intent = Intent(this, BluetoothConnection2::class.java)
         startActivity(intent)
-        finish() // Llama a finish() para cerrar la pantalla de inicio de sesión
+        finish()
+    }
+
+    private fun saveUserId(userId: Int, context: Context) {
+        val sharedPreferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("ID_Usuario", userId)
+        editor.apply()
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -69,4 +69,7 @@
     <string name="notificaciones">Notificaciones</string>
     <string name="preferencias_de_idioma">Preferencias de Idioma</string>
     <string name="cambiar_el_idioma_de_la_aplicaci_n">Cambiar el idioma de la aplicación</string>
+    <string name="conectando">CONECTANDO...</string>
+    <string name="nombre_del_dispositivo">Nombre del dispositivo</string>
+    <string name="cancelar">Cancelar</string>
 </resources>

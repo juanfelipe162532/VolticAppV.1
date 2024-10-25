@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Voltic App V.1">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-09-15T01:59:17.552244900Z">
+        <DropdownSelection timestamp="2024-10-24T18:18:31.380376700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.168.1.2:5555;connection=7783316c" />
+              <DeviceId pluginId="Default" identifier="serial=192.168.1.6:5555;connection=749e16b6" />
             </handle>
           </Target>
         </DropdownSelection>
