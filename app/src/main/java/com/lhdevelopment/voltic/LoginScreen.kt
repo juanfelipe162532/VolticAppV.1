@@ -100,41 +100,73 @@ class LoginScreen : ComponentActivity() {
 
         apiService.loginUser(fullUrl, requestBody).enqueue(object : Callback<AuthResponse> {
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
+                // Obtener la respuesta cruda del servidor
+                val rawResponse = response.body()?.toString() ?: response.errorBody()?.string()
+                Log.d(TAG, "Respuesta cruda del servidor: $rawResponse")
+
                 if (response.isSuccessful) {
                     val authResponse = response.body()
 
-                    // Verifica si la respuesta es nula
                     if (authResponse != null) {
-                        val idUsuario = authResponse.ID_Usuario
-                        val message = authResponse.message // Accede al mensaje
+                        val statusCode = authResponse.statusCode
 
-                        Log.d(TAG, "ID_Usuario obtenido: $idUsuario, Mensaje: $message")
+                        if (statusCode == 200) {
+                            try {
+                                // Parsear el JSON anidado en el campo "body"
+                                val responseBody =
+                                    JSONObject(authResponse.body) // Asegúrate de que 'body' es un String en AuthResponse
+                                val idUsuario = responseBody.optInt("ID_Usuario", 0)
+                                val message =
+                                    responseBody.optString("message", "Mensaje no disponible")
 
-                        // Comprobar ID_Usuario y manejar la lógica de navegación
-                        if (idUsuario != 0) {
-                            saveUserId(idUsuario, this@LoginScreen)
+                                Log.d(TAG, "ID_Usuario obtenido: $idUsuario, Mensaje: $message")
 
-                            if (rememberMe) {
-                                saveUserCredentials(username, password)
+                                // Comprobar ID_Usuario y manejar la lógica de navegación
+                                if (idUsuario != 0) {
+                                    saveUserId(idUsuario, this@LoginScreen)
+
+                                    if (rememberMe) {
+                                        saveUserCredentials(username, password)
+                                    }
+
+                                    navigateToBluetoothConnection() // Navega a la siguiente actividad
+                                } else {
+                                    Toast.makeText(
+                                        this@LoginScreen,
+                                        "Usuario o contraseña incorrectos",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error al parsear el cuerpo de la respuesta", e)
                             }
-
-                            navigateToBluetoothConnection()
                         } else {
-                            Toast.makeText(this@LoginScreen, "Error de autenticación: ID de usuario inválido", Toast.LENGTH_SHORT).show()
-                            Log.d(TAG, "ID_Usuario es 0, acceso denegado")
+                            Toast.makeText(
+                                this@LoginScreen,
+                                "Error en el inicio de sesión. Código: $statusCode",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     } else {
                         Log.e(TAG, "Respuesta vacía del servidor")
                     }
                 } else {
                     Log.e(TAG, "Error en el inicio de sesión: ${response.code()}")
-                    Toast.makeText(this@LoginScreen, "Error en el inicio de sesión", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@LoginScreen,
+                        "Error en el servidor. Intente más tarde.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
                 Log.e(TAG, "Error en la solicitud de inicio de sesión: ${t.message}", t)
-                Toast.makeText(this@LoginScreen, "Error en el inicio de sesión: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@LoginScreen,
+                    "Error en la conexión. Verifique su red.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         })
     }
