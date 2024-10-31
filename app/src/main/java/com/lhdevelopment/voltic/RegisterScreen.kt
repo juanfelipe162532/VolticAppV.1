@@ -45,9 +45,7 @@ private fun isValidEmail(email: String): Boolean {
     }
 
     private fun isValidPassword(password: String): Boolean {
-        val passwordPattern = Pattern.compile(
-            "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{8,12}$"
-        )
+        val passwordPattern = Pattern.compile("^.{5,12}$")
         return passwordPattern.matcher(password).matches()
     }
 
@@ -77,15 +75,6 @@ class RegisterScreen : ComponentActivity() {
 
         // Establecer el contenido
         setContentView(R.layout.registerscreen)
-
-
-
-
-
-
-
-
-
 
         val emailEditText: EditText = findViewById(R.id.emailEditText)
         val usernameEditText: EditText = findViewById(R.id.usernameEditText)
