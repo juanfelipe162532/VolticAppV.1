@@ -2,7 +2,6 @@ package com.lhdevelopment.voltic
 
 import android.content.Intent
 import android.graphics.Color
-import android.content.Context
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -83,7 +82,7 @@ class LoginScreen : ComponentActivity() {
                     passwordEditText.requestFocus()
                 }
                 else -> {
-                    val fullUrl = "https://ykyoaekhp9.execute-api.us-east-1.amazonaws.com/Stage1/login/"
+                    val fullUrl = "http://192.168.1.4:5001/login/"
                     loginUser(fullUrl, username, password, rememberMe)
                 }
             }
@@ -99,6 +98,7 @@ class LoginScreen : ComponentActivity() {
         val requestBody = RegisterRequestBody(userJsonObject.toString())
 
         apiService.loginUser(fullUrl, requestBody).enqueue(object : Callback<AuthResponse> {
+            // Método en el que se maneja la respuesta de la API
             override fun onResponse(call: Call<AuthResponse>, response: Response<AuthResponse>) {
                 // Obtener la respuesta cruda del servidor
                 val rawResponse = response.body()?.toString() ?: response.errorBody()?.string()
@@ -109,37 +109,24 @@ class LoginScreen : ComponentActivity() {
 
                     if (authResponse != null) {
                         val statusCode = authResponse.statusCode
+                        val message = authResponse.message ?: "Sin mensaje"
+
+                        Log.d(TAG, "Status Code: $statusCode, Message: $message")
 
                         if (statusCode == 200) {
-                            try {
-                                // Parsear el JSON anidado en el campo "body"
-                                val responseBody =
-                                    JSONObject(authResponse.body) // Asegúrate de que 'body' es un String en AuthResponse
-                                val idUsuario = responseBody.optInt("ID_Usuario", 0)
-                                val message =
-                                    responseBody.optString("message", "Mensaje no disponible")
+                            // Lógica en caso de éxito
+                            Toast.makeText(
+                                this@LoginScreen,
+                                "Inicio de sesión exitoso: $message",
+                                Toast.LENGTH_SHORT
+                            ).show()
 
-                                Log.d(TAG, "ID_Usuario obtenido: $idUsuario, Mensaje: $message")
-
-                                // Comprobar ID_Usuario y manejar la lógica de navegación
-                                if (idUsuario != 0) {
-                                    saveUserId(idUsuario, this@LoginScreen)
-
-                                    if (rememberMe) {
-                                        saveUserCredentials(username, password)
-                                    }
-
-                                    navigateToBluetoothConnection() // Navega a la siguiente actividad
-                                } else {
-                                    Toast.makeText(
-                                        this@LoginScreen,
-                                        "Usuario o contraseña incorrectos",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            } catch (e: Exception) {
-                                Log.e(TAG, "Error al parsear el cuerpo de la respuesta", e)
+                            // Guardar credenciales si el usuario desea recordar
+                            if (rememberMe) {
+                                saveUserCredentials(username, password)
                             }
+
+                            navigateToBluetoothConnection() // Navega a la siguiente actividad
                         } else {
                             Toast.makeText(
                                 this@LoginScreen,
@@ -149,6 +136,11 @@ class LoginScreen : ComponentActivity() {
                         }
                     } else {
                         Log.e(TAG, "Respuesta vacía del servidor")
+                        Toast.makeText(
+                            this@LoginScreen,
+                            "Error: Respuesta vacía del servidor.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } else {
                     Log.e(TAG, "Error en el inicio de sesión: ${response.code()}")
@@ -159,6 +151,8 @@ class LoginScreen : ComponentActivity() {
                     ).show()
                 }
             }
+
+
 
             override fun onFailure(call: Call<AuthResponse>, t: Throwable) {
                 Log.e(TAG, "Error en la solicitud de inicio de sesión: ${t.message}", t)
@@ -195,12 +189,5 @@ class LoginScreen : ComponentActivity() {
         val intent = Intent(this, BluetoothConnection2::class.java)
         startActivity(intent)
         finish()
-    }
-
-    private fun saveUserId(userId: Int, context: Context) {
-        val sharedPreferences = context.getSharedPreferences("UserPreferences", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt("ID_Usuario", userId)
-        editor.apply()
     }
 }

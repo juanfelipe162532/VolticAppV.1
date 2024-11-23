@@ -2,12 +2,14 @@ package com.lhdevelopment.voltic
 
 import android.content.Intent
 import android.graphics.Color
+import java.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.Editable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.TextWatcher
 import android.text.method.HideReturnsTransformationMethod
+import java.util.*
 import android.text.method.LinkMovementMethod
 import android.text.method.PasswordTransformationMethod
 import android.text.style.ClickableSpan
@@ -128,6 +130,7 @@ class RegisterScreen : ComponentActivity() {
                     emailStatus.visibility = ImageView.VISIBLE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -142,6 +145,7 @@ class RegisterScreen : ComponentActivity() {
                     usernameStatus.visibility = ImageView.VISIBLE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -156,6 +160,7 @@ class RegisterScreen : ComponentActivity() {
                     passwordStatus.visibility = ImageView.VISIBLE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -170,6 +175,7 @@ class RegisterScreen : ComponentActivity() {
                     confirmPasswordStatus.visibility = ImageView.VISIBLE
                 }
             }
+
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
@@ -181,6 +187,11 @@ class RegisterScreen : ComponentActivity() {
             val password = passwordEditText.text.toString()
             val confirmPassword = confirmPasswordEditText.text.toString()
             val termsAccepted = termsCheckBox.isChecked
+
+            Log.d(
+                TAG,
+                "Email: $email, Username: $username, Password: $password, Confirm Password: $confirmPassword, Terms Accepted: $termsAccepted"
+            )
 
             if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(
@@ -202,64 +213,69 @@ class RegisterScreen : ComponentActivity() {
                 return@setOnClickListener
             }
 
-            val fullUrl = "https://ykyoaekhp9.execute-api.us-east-1.amazonaws.com/Stage1/registration/"
+            val fullUrl =
+                "http://192.168.1.4:5000/registro/"
+            Log.d(TAG, "Llamando a createUser con la URL: $fullUrl")
             createUser(fullUrl, email, username, password)
         }
     }
 
     private fun createUser(fullUrl: String, email: String, username: String, password: String) {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentDate = dateFormat.format(Date())
+
+        // Obtener el idioma y región del dispositivo
+        val language = "es-ES"
+        val country = "CO"
+
+        // Crear un objeto JSON con los datos del usuario
         val userJsonObject = JSONObject().apply {
             put("Email", email)
             put("Nombre_Usuario", username)
             put("Contrasena", password)
+            put("Fecha_Registro", currentDate) // Agregar la fecha de registro
+            put("Idioma", language) // Agregar el idioma
+            put("Region", country) // Agregar la región
         }
 
-        // Se crea un objeto RegisterRequestBody con el cuerpo JSON como una cadena
+        // Crear el cuerpo de la solicitud con el JSON
         val requestBody = RegisterRequestBody(userJsonObject.toString())
 
-        // Log para mostrar la estructura y contenido del JSON
+        // Log para mostrar el contenido del JSON enviado
         Log.d(TAG, "Estructura del JSON enviado: ${requestBody.body}")
 
+        // Realizar la solicitud de registro con Retrofit
         apiService.registerUser(fullUrl, requestBody).enqueue(object : Callback<ApiResponse> {
             override fun onResponse(call: Call<ApiResponse>, response: Response<ApiResponse>) {
-                if (response.isSuccessful) {
-                    Log.d(TAG, "Registro exitoso")
-                    Log.d(
-                        TAG,
-                        "Respuesta del servidor: ${response.body()}"
-                    )
+                val statusCode = response.code() // Obtener el código de estado HTTP
+
+                // Si el código de estado es 200, navegamos a la siguiente actividad
+                if (statusCode == 200) {
+                    // Registro exitoso, navega a la siguiente actividad
                     Toast.makeText(this@RegisterScreen, "Registro exitoso", Toast.LENGTH_SHORT).show()
 
+                    // Guardar el estado de registro en SharedPreferences
                     val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
                     val editor = sharedPreferences.edit()
                     editor.putBoolean("isRegistered", true)
                     editor.apply()
 
+                    // Navegar a la pantalla de login
                     navigateToLoginScreen()
                 } else {
-                    Log.e(TAG, "Error en el registro: ${response.code()}")
-                    Log.e(
-                        TAG,
-                        "Respuesta del servidor: ${response.errorBody()?.string()}"
-                    )
-                    Toast.makeText(this@RegisterScreen, "Error en el registro", Toast.LENGTH_SHORT).show()
+                    // Si el código de estado no es 200, muestra el código en un Toast
+                    Toast.makeText(this@RegisterScreen, "Código de estado HTTP: $statusCode", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ApiResponse>, t: Throwable) {
-                Log.e(
-                    TAG,
-                    "Error en la solicitud de registro: ${t.message}",
-                    t
-                )
-                Toast.makeText(
-                    this@RegisterScreen,
-                    "Error en el registro: ${t.message}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                // Manejo de errores cuando no se puede realizar la solicitud
+                Log.e(TAG, "Error en la solicitud de registro: ${t.message}", t)
+                Toast.makeText(this@RegisterScreen, "Error en el registro: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
 
     private fun togglePasswordVisibility(passwordEditText: EditText, toggle: ImageView) {
         if (passwordEditText.transformationMethod is PasswordTransformationMethod) {
