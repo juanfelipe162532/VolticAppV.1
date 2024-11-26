@@ -214,7 +214,7 @@ class RegisterScreen : ComponentActivity() {
             }
 
             val fullUrl =
-                "http://192.168.1.4:5000/registro/"
+                "http://192.168.1.5:5000/registro/"
             Log.d(TAG, "Llamando a createUser con la URL: $fullUrl")
             createUser(fullUrl, email, username, password)
         }

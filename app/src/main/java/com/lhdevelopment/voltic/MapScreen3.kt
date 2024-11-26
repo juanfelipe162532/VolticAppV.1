@@ -209,13 +209,19 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
 
     private fun startCalculationThread() {
         calculationThread = Thread {
-            while (isCalculating) {
-                val elapsedTime = System.currentTimeMillis() - startTime
-                runOnUiThread {
-                    val routeTimeNumbers = findViewById<TextView>(R.id.routeTimeNumbers)
-                    routeTimeNumbers.text = formatTime(elapsedTime)
+            try {
+                while (isCalculating) {
+                    val elapsedTime = System.currentTimeMillis() - startTime
+                    runOnUiThread {
+                        val routeTimeNumbers = findViewById<TextView>(R.id.routeTimeNumbers)
+                        routeTimeNumbers.text = formatTime(elapsedTime)
+                    }
+                    Thread.sleep(1000) // Sleep for 1 second, adjust as needed
                 }
-                Thread.sleep(1000) // Actualizar cada segundo
+            } catch (e: InterruptedException) {
+                // Handle thread interruption, possibly log it
+                Thread.currentThread().interrupt() // Preserve the interrupted status
+                // Perform any necessary cleanup or exit logic
             }
         }
         calculationThread.start()
@@ -228,6 +234,8 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
         val remainingSeconds = seconds % 60
         return String.format("%02d:%02d", minutes, remainingSeconds)
     }
+
+
 
     // Función para pausar o reanudar el seguimiento de la velocidad, tiempo y distancia
     private fun togglePauseState() {
@@ -260,6 +268,9 @@ class MapScreen3 : FragmentActivity(), OnMapReadyCallback {
             togglePauseState() // Si la ruta no está pausada, primero la pausamos
         }
 
+        if (calculationThread.isAlive) {
+            calculationThread.interrupt()
+        }
         // Detener las actualizaciones de ubicación
         fusedLocationClient.removeLocationUpdates(object : LocationCallback() {})
 

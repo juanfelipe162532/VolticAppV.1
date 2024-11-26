@@ -82,7 +82,7 @@ class LoginScreen : ComponentActivity() {
                     passwordEditText.requestFocus()
                 }
                 else -> {
-                    val fullUrl = "http://192.168.1.4:5001/login/"
+                    val fullUrl = "http://192.168.1.5:5001/login/"
                     loginUser(fullUrl, username, password, rememberMe)
                 }
             }

@@ -9,4 +9,22 @@
         android:background="@drawable/gradient_overlay_2_day"
         android:layout_alignParentBottom="true" />
 
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:background="@drawable/back_icon_red"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Función no disponible temporalmente"
+        android:textAlignment="center"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
 </RelativeLayout>
